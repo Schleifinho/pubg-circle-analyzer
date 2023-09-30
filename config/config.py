@@ -1,5 +1,4 @@
 import logging
-from api_key import API_KEY_HIDDEN
 
 # region General
 NUM_OF_THREADS = 4

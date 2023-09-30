@@ -29,7 +29,8 @@ def get_player_stats(players):
 
 
 def get_tournament_matches(t_id):
-    url = PREFIX_GET_TOURNAMENT_URL + str(t_id) # TODO check url
+    url = PREFIX_GET_TOURNAMENT_URL + "/" + str(t_id) # TODO check url
+    print(url)
     response = requests.get(url, headers=HEADER_AUTH)
     if response is None:
         return []

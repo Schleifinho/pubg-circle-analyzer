@@ -11,7 +11,7 @@ from db.push_db import push_telemetry_log_event_server, push_telemetry_log_live_
     push_tournament_match_data
 from helper.my_logger import logger
 
-from pubg_api_requests import get_tournament_match_info, get_match_info, get_tournament_matches, get_player_stats, \
+from scripts.pubg_api_requests import get_tournament_match_info, get_match_info, get_tournament_matches, get_player_stats, \
     get_circles_from_match
 
 

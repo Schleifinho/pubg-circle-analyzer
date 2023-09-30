@@ -8,7 +8,7 @@ from tqdm import tqdm
 from config.config import RESULTS_FOLDER, DATE_FORMAT
 from db.fetching_db import fetch_matches
 from helper.my_logger import logger
-from pubg_api_requests import get_telemetry_data
+from scripts.pubg_api_requests import get_telemetry_data
 
 plt.style.use("seaborn")
 
