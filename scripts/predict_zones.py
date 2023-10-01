@@ -35,11 +35,11 @@ def predict_svm(end_circles, candidate, map_name):
     c_x = float(candidate[0])
     c_y = float(candidate[1])
 
-    Xnew = [[c_x * 100000, c_y * 100000]]
+    x_new = [[c_x * 100000, c_y * 100000]]
     # make a prediction
-    new_x = clf_x.predict(Xnew)
-    new_y = clf_y.predict(Xnew)
-    print("X=%s, Predicted=%s %s" % (Xnew[0], new_x[0], new_y[0]))
+    new_x = clf_x.predict(x_new)
+    new_y = clf_y.predict(x_new)
+    print("X=%s, Predicted=%s %s" % (x_new[0], new_x[0], new_y[0]))
 
     img = plt.imread(map_name + ".png")
     fig, ax = plt.subplots(figsize=(16, 16))

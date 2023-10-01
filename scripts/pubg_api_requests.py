@@ -57,20 +57,6 @@ def get_circle_log_from_telemetry_data(telemetry_data):
     return filtered
 
 
-def get_telemetry_data(server, matches_esport_live):
-    matches_esport = matches_esport_live[0]
-    matches_live = matches_esport_live[1]
-    if server == "live":
-        return fetch_live_server_telemetry(matches_live)
-    elif server == "esport":
-        return fetch_event_server_telemetry(matches_esport)
-    else:
-        telemetry = list(fetch_live_server_telemetry(matches_live))
-        telemetry += list(fetch_event_server_telemetry(matches_esport))
-        return telemetry
-
-
-
 def get_tournament_list():
     url = PREFIX_GET_TOURNAMENT_URL
     r = requests.get(url, headers=HEADER_AUTH)

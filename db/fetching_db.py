@@ -25,6 +25,20 @@ def fetch_live_server_matches(_map, date):
         .where(LiveServerMatchData.createdAt > date)
 
 
+def fetch_telemetry_data(server, matches_esport_live):
+    matches_esport = matches_esport_live[0]
+    matches_live = matches_esport_live[1]
+    if server == "live":
+        return fetch_live_server_telemetry(matches_live)
+    elif server == "esport":
+        return fetch_event_server_telemetry(matches_esport)
+    else:
+        telemetry = list(fetch_live_server_telemetry(matches_live))
+        telemetry += list(fetch_event_server_telemetry(matches_esport))
+        return telemetry
+
+
+
 def fetch_event_server_telemetry(matches):
     return TelemetryLogGameStatePeriodicEventServer.select(
         TelemetryLogGameStatePeriodicEventServer.matchId,

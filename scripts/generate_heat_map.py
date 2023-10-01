@@ -6,9 +6,8 @@ import numpy as np
 from tqdm import tqdm
 
 from config.config import RESULTS_FOLDER, DATE_FORMAT
-from db.fetching_db import fetch_matches
+from db.fetching_db import fetch_matches, fetch_telemetry_data
 from helper.my_logger import logger
-from scripts.pubg_api_requests import get_telemetry_data
 
 plt.style.use("seaborn")
 
@@ -19,7 +18,7 @@ def create_heat_maps(server, maps, date_string):
     for map_i in tqdm(maps, desc="Generating for Map...", colour="green"):
         logger.debug(f"\nGenerating {map_i[1]}")
         matches_esport_live = fetch_matches(server, map_i[0], date)
-        selection = get_telemetry_data(server, matches_esport_live)
+        selection = fetch_telemetry_data(server, matches_esport_live)
 
         if len(selection) == 0:
             logger.info(f"No telemetry data for {map_i[1]} [{server}]!")

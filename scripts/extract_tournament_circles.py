@@ -1,24 +1,62 @@
 import threading
+from datetime import datetime
+
 import validators
 from math import ceil
-from config.config import NUM_OF_THREADS
+from config.config import NUM_OF_THREADS, DATE_FORMAT
 from tqdm import tqdm
 import time
 from db.fetching_db import fetch_get_or_none_telemetry_log_live_server, fetch_get_or_none_live_server_match_data, \
     fetch_get_or_none_tournament_match_data, fetch_get_or_none_telemetry_log_tournament, \
-    fetch_tournament_matches_by_tournament_id
+    fetch_tournament_matches_by_tournament_id, fetch_tournament_by_date
 from db.push_db import push_telemetry_log_event_server, push_telemetry_log_live_server, push_live_server_match_data, \
-    push_tournament_match_data
+    push_tournament_match_data, push_tournament, push_tournament_list
 from helper.my_logger import logger
 
-from scripts.pubg_api_requests import get_tournament_match_info, get_match_info, get_tournament_matches, get_player_stats, \
-    get_circles_from_match
+from scripts.pubg_api_requests import get_tournament_match_info, get_match_info, get_tournament_matches, \
+    get_player_stats, \
+    get_circles_from_match, get_tournament_list
 
 
 def find_telemetry_url(data):
     for line in data:
         if 'attributes' in line and 'URL' in line['attributes']:
             return line['attributes']['URL']
+
+
+def get_tournaments_and_push_to_db():
+    tournaments = get_tournament_list()
+    if tournaments['data'] and len(tournaments) > 0:
+        push_tournament_list(tournaments['data'])
+    else:
+        logger.error("Could Not Retrieve Tournament List!")
+
+
+def get_scrims_and_push_to_db(date_string):
+    date = datetime.strptime(date_string, DATE_FORMAT)
+    tourneys = fetch_tournament_by_date(date)
+    total_list_of_matches_and_telemetry_urls = list()
+
+    for tourney in tourneys:
+        if str(tourney.id).count("-") > 0:
+            clean_tourney = str(tourney.id).split("-")
+            scrim_tourney = "test-" + clean_tourney[1]
+            matches_response = get_tournament_matches(scrim_tourney)
+
+            if "included" in matches_response:
+
+                push_tournament(_id=scrim_tourney, _type="scrim", _createdAt=tourney.createdAt)
+
+                if 'errors' in matches_response['data']:
+                    logger.warning(f"No matches for tourney {tourney.id}")
+                    continue
+                matches = matches_response['included']
+
+                match_id_and_telemetry_urls = retrieve_matches_and_push_to_db_event(matches, scrim_tourney)
+                total_list_of_matches_and_telemetry_urls += match_id_and_telemetry_urls
+
+        time.sleep(7)
+    extract_circles_for_event_server(total_list_of_matches_and_telemetry_urls)
 
 
 def multithread_extract_circles_for_event_server(list_of_matches_and_telemetry, thread):
