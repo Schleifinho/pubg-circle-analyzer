@@ -1,4 +1,6 @@
+# region Imports
 import logging
+# endregion
 
 # region General
 NUM_OF_THREADS = 8

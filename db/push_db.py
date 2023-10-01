@@ -1,9 +1,13 @@
+# region Imports
 import peewee
 from db.db import Tournaments, TelemetryLogGameStatePeriodicEventServer, TelemetryLogGameStatePeriodicLiveServer, \
     LiveServerMatchData
 from helper.my_logger import logger
 
 
+# endregion
+
+# region Push To DB
 def push_tournament_list(tournament_list):
     mapped_tournament_list = [{"id": element["id"], "type": element["type"],
                                "createdAt": element["attributes"]["createdAt"]} for element in tournament_list]
@@ -89,3 +93,4 @@ def push_tournament(_id, _type, _createdAt):
         Tournaments.create(id=_id, type=_type, createdAt=_createdAt)
     except peewee.PeeweeException as e:
         logger.debug(e)
+# endregion

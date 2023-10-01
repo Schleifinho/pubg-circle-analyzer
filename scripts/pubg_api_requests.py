@@ -1,10 +1,28 @@
+# region Imports
 import requests
-
 from config.pubg_api_config import HEADER_AUTH, HEADER_NO_AUTH, HEADER_TELEMETRY, \
     PREFIX_GET_TOURNAMENT_MATCH_INFO_URL, PREFIX_GET_TOURNAMENT_URL, PREFIX_GET_LIVE_MATCH_INFO_URL, \
     PREFIX_GET_PLAYER_STATS_URL
-from db.fetching_db import fetch_event_server_telemetry, fetch_live_server_telemetry
-from helper.my_logger import logger
+
+
+# endregion
+
+# region Event Server Requests
+def get_tournament_list():
+    url = PREFIX_GET_TOURNAMENT_URL
+    r = requests.get(url, headers=HEADER_AUTH)
+    tourneys = r.json()
+    return tourneys
+
+
+def get_tournament_matches(t_id):
+    url = PREFIX_GET_TOURNAMENT_URL + "/" + str(t_id)
+    response = requests.get(url, headers=HEADER_AUTH)
+    if response is None:
+        return []
+
+    obj = response.json()
+    return obj
 
 
 def get_tournament_match_info(match_id):
@@ -13,6 +31,9 @@ def get_tournament_match_info(match_id):
     return r.json()
 
 
+# endregion
+
+# region Live Server Requests
 def get_match_info(match_id):
     url = PREFIX_GET_LIVE_MATCH_INFO_URL + match_id
     r = requests.get(url, headers=HEADER_NO_AUTH)
@@ -29,16 +50,9 @@ def get_player_stats(players):
     return r.json()
 
 
-def get_tournament_matches(t_id):
-    url = PREFIX_GET_TOURNAMENT_URL + "/" + str(t_id)
-    response = requests.get(url, headers=HEADER_AUTH)
-    if response is None:
-        return []
+# endregion
 
-    obj = response.json()
-    return obj
-
-
+# region General Requests
 def get_circles_from_match(telemetry_url):
     telemetry_data = requests.get(telemetry_url, headers=HEADER_TELEMETRY).json()
     filtered_list = get_circle_log_from_telemetry_data(telemetry_data)
@@ -55,10 +69,4 @@ def get_circle_log_from_telemetry_data(telemetry_data):
                 seen.add(line['common']['isGame'])
 
     return filtered
-
-
-def get_tournament_list():
-    url = PREFIX_GET_TOURNAMENT_URL
-    r = requests.get(url, headers=HEADER_AUTH)
-    tourneys = r.json()
-    return tourneys
+# endregion

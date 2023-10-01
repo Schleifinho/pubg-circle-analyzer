@@ -1,9 +1,11 @@
+# region Imports
 import numpy as np
 import pandas as pd
 from sklearn import svm
 from sklearn.linear_model import LogisticRegression
 from sklearn.datasets import make_blobs
 import matplotlib.pylab as plt
+# endregion
 
 
 def predict_svm(end_circles, candidate, map_name):

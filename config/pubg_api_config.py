@@ -1,6 +1,8 @@
-# region PUBG API CONFIG
+# region Imports
 from config.api_key import API_KEY_HIDDEN
+# endregion
 
+# region PUBG API CONFIG
 API_KEY = API_KEY_HIDDEN  # replace with your API KEY
 
 HEADER_AUTH = {

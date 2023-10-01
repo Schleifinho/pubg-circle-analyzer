@@ -1,9 +1,12 @@
+# region Imports
 from peewee import fn
-
 from db.db import TournamentMatchData, LiveServerMatchData, TelemetryLogGameStatePeriodicEventServer, \
     TelemetryLogGameStatePeriodicLiveServer, Tournaments
 
 
+# endregion
+
+# region Fetching
 def fetch_matches(server, _map, date):
     if server == "live":
         return None, fetch_live_server_matches(_map, date)
@@ -36,7 +39,6 @@ def fetch_telemetry_data(server, matches_esport_live):
         telemetry = list(fetch_live_server_telemetry(matches_live))
         telemetry += list(fetch_event_server_telemetry(matches_esport))
         return telemetry
-
 
 
 def fetch_event_server_telemetry(matches):
@@ -82,6 +84,17 @@ def fetch_tournament_matches_by_tournament_id(tournament_id):
         TournamentMatchData.tournamentId == tournament_id)
 
 
-def fetch_tournament_by_date(date):
-    return Tournaments.select().where(Tournaments.createdAt > date).where(Tournaments.type == "tournament")
+def fetch_tournament_by_date_and_type(date, _type=None):
+    if type:
+        return Tournaments.select().where(Tournaments.createdAt > date).where(Tournaments.type == _type)
+    else:
+        return Tournaments.select().where(Tournaments.createdAt > date)
 
+
+def fetch_tournament_id_by_date(date):
+    return Tournaments.select(Tournaments.id).where(Tournaments.createdAt > date)
+
+
+def fetch_tournaments_by_ids_list(tournament_ids):
+    return Tournaments.select().where(Tournaments.id.in_(tournament_ids))
+# endregion

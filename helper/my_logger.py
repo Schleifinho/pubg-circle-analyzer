@@ -1,7 +1,11 @@
+# region Imports
 import logging
 import colorlog
 from config.config import LOGGING_LEVEL
 
+# endregion
+
+# region Create Logger
 # Create a custom logger
 logger = logging.getLogger("my_custom_logger")
 logger.setLevel(LOGGING_LEVEL)
@@ -33,3 +37,4 @@ console_handler.setFormatter(formatter)
 
 # Add the handler to the logger
 logger.addHandler(console_handler)
+# endregion

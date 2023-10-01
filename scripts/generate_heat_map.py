@@ -1,3 +1,4 @@
+# region Imports
 from datetime import datetime
 import pandas as pd
 import seaborn as sns
@@ -8,10 +9,10 @@ from tqdm import tqdm
 from config.config import RESULTS_FOLDER, DATE_FORMAT
 from db.fetching_db import fetch_matches, fetch_telemetry_data
 from helper.my_logger import logger
-
 plt.style.use("seaborn")
+# endregion
 
-
+# region Create Heatmaps
 def create_heat_maps(server, maps, date_string):
     date = datetime.strptime(date_string, DATE_FORMAT)
 
@@ -73,3 +74,4 @@ def create_heat_map_for_end_circles(circles, map_tuple, server, title, bw_adjust
     lgnd = ax.legend(bbox_to_anchor=(1.35, 1))
     lgnd.legendHandles[0].set_sizes([100])
     plt.savefig(folder + map_name_pretty + '_heatmap_' + str(bw_adjust).replace(".", "_") + '_points.png')
+# endregion

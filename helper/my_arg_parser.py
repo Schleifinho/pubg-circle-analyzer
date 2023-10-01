@@ -1,9 +1,13 @@
+# region Imports
 import argparse
 
 from config.config import GREEN, DATE_DEFAULT, RESET
 from helper.my_logger import logger
 
 
+# endregion
+
+# region Create Parser
 def create_parser():
     # Define ANSI color codes
     parser = argparse.ArgumentParser(description="PUBG Heatmap Interface",
@@ -90,8 +94,8 @@ def create_parser():
         logger.error("Set '-player' Flag If Live Server Is Used!")
         parser.exit()
 
-
     if args.predict and len(args.maps) != 1:
         logger.error("'-map' Flag Issue: Specify Exactly One Map!")
         parser.exit()
     return args
+# endregion

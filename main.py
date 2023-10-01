@@ -1,16 +1,19 @@
+# region Imports
 import os
-from datetime import datetime
-from config.config import MAPS, DATE_FORMAT, RESULTS_FOLDER
+from config.config import MAPS, RESULTS_FOLDER
 from db.db import Tournaments, TournamentMatchData, \
     LiveServerMatchData, TelemetryLogGameStatePeriodicEventServer, TelemetryLogGameStatePeriodicLiveServer, mysqlDB
-from scripts.extract_tournament_circles import extract_matches_for_tournaments, \
-    extract_matches_and_circles_for_live_server, get_tournaments_and_push_to_db, get_scrims_and_push_to_db
+from scripts.extract_tournament_circles import get_tournaments_and_push_to_db, get_scrims_and_push_to_db, \
+    start_extracting_esport_circles, start_extracting_live_circles
 from scripts.generate_heat_map import create_heat_maps
 from helper.my_arg_parser import create_parser
 from helper.my_logger import logger
 from scripts.predict_zones import predict_svm
 
 
+# endregion
+
+# region Inits
 def create_db_and_tables():
     # create_db()
     mysqlDB.create_tables([LiveServerMatchData, Tournaments, TournamentMatchData,
@@ -29,6 +32,8 @@ def create_folder():
         if not os.path.exists(f"{RESULTS_FOLDER}/esport/" + mapi[1].lower()):
             os.makedirs(f"{RESULTS_FOLDER}/esport/" + mapi[1].lower())
 
+
+# endregion
 
 # region Load Commands
 def load_init():
@@ -72,28 +77,7 @@ def load_predict(args):
 
 # endregion
 
-def start_extracting_live_circles(player_list):
-    extract_matches_and_circles_for_live_server(player_list)
-
-
-def start_extracting_esport_circles(tournament_ids, date_string):
-    if not tournament_ids:
-        logger.debug(f"Load all tournaments since {date_string}")
-        date_object = datetime.strptime(date_string, DATE_FORMAT)
-        date_only = date_object.date()
-        tournaments = Tournaments.select(Tournaments.id).where(Tournaments.createdAt > date_only)
-
-    else:
-        logger.debug(f"Load tournaments: {tournament_ids}")
-        tournaments = Tournaments.select().where(Tournaments.id.in_(tournament_ids))
-
-    if len(tournaments) > 0:
-        logger.info(f"Extracting Circles And Matches For {len(tournaments)} Tournaments")
-        extract_matches_for_tournaments(tournaments)
-    else:
-        logger.warning("No tournaments found!")
-
-
+# region Main
 def main():
     args = create_parser()
     mysqlDB.connect()
@@ -119,3 +103,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+# endregion

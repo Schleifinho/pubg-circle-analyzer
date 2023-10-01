@@ -1,8 +1,14 @@
+# region Imports
 from peewee import Model, MySQLDatabase, CharField, BooleanField, IntegerField, ForeignKeyField, \
     DateTimeField, FloatField
 
+# endregion
+
+# region Create DB
 mysqlDB = MySQLDatabase(database='pubg', user='root', password='root', host='localhost')
 
+
+# endregion
 
 # region Live Data
 class LiveServerMatchData(Model):
