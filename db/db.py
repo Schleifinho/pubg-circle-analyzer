@@ -3,6 +3,7 @@ from peewee import Model, MySQLDatabase, CharField, BooleanField, IntegerField, 
 
 mysqlDB = MySQLDatabase(database='pubg', user='root', password='root', host='localhost')
 
+
 # region Live Data
 class LiveServerMatchData(Model):
     matchId = CharField(primary_key=True)
@@ -28,7 +29,8 @@ class TelemetryLogGameStatePeriodicLiveServer(Model):
     poisonGasWarningPositionY = FloatField()
     poisonGasWarningRadius = FloatField()
     isGame = FloatField()
-    matchId = ForeignKeyField(LiveServerMatchData, backref='TelemetryLogGameStatePeriodicLiveServer')
+    matchId = ForeignKeyField(LiveServerMatchData, backref='TelemetryLogGameStatePeriodicLiveServer',
+                              column_name="matchId")
 
     class Meta:
         database = mysqlDB
@@ -56,7 +58,7 @@ class TournamentMatchData(Model):
     createdAt = DateTimeField()
     matchType = CharField()
     telemetryURL = CharField()
-    tournamentId = ForeignKeyField(Tournaments, backref='tournamentMatchData')
+    tournamentId = ForeignKeyField(Tournaments, backref='tournamentMatchData', column_name="tournamentId")
 
     class Meta:
         database = mysqlDB
@@ -71,7 +73,8 @@ class TelemetryLogGameStatePeriodicEventServer(Model):
     poisonGasWarningPositionY = FloatField()
     poisonGasWarningRadius = FloatField()
     isGame = FloatField()
-    matchId = ForeignKeyField(TournamentMatchData, backref='TelemetryLogGameStatePeriodicEventServer')
+    matchId = ForeignKeyField(TournamentMatchData, backref='TelemetryLogGameStatePeriodicEventServer',
+                              column_name="matchId")
 
     class Meta:
         database = mysqlDB

@@ -17,7 +17,7 @@ def create_heat_maps(server, maps, date_string):
     date = datetime.strptime(date_string, DATE_FORMAT)
 
     for map_i in tqdm(maps, desc="Generating for Map...", colour="green"):
-
+        logger.debug(f"\nGenerating {map_i[1]}")
         matches_esport_live = fetch_matches(server, map_i[0], date)
         selection = get_telemetry_data(server, matches_esport_live)
 
@@ -25,13 +25,8 @@ def create_heat_maps(server, maps, date_string):
             logger.info(f"No telemetry data for {map_i[1]} [{server}]!")
             continue
 
-        circles = []
-        seen = set()
-        for telemetry_match in selection:
-            if telemetry_match.matchId not in seen:
-                circles.append({"x": telemetry_match.poisonGasWarningPositionX,
-                                "y": telemetry_match.poisonGasWarningPositionY})
-                seen.add(telemetry_match.matchId)
+        circles = [{"x": match.poisonGasWarningPositionX, "y": match.poisonGasWarningPositionY} for match in selection]
+
 
         server_name = "E-SPORT" if server == "esport" else "LIVE" if server == "live" else "E-SPORT/LIVE"
         title = f"2023 {server_name} " + map_i[1] + " (# maps: " + str(len(circles)) + ")"

@@ -250,7 +250,7 @@ def extract_circles_for_players(players):
     time.sleep(7)
     response = get_player_stats(players)
     if 'errors' in response:
-        print(response['errors'])
+        logger.error(response['errors'])
         return None
 
     if response['data'] is None:

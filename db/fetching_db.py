@@ -1,3 +1,5 @@
+from peewee import fn
+
 from db.db import TournamentMatchData, LiveServerMatchData, TelemetryLogGameStatePeriodicEventServer, \
     TelemetryLogGameStatePeriodicLiveServer, Tournaments
 
@@ -27,20 +29,20 @@ def fetch_event_server_telemetry(matches):
     return TelemetryLogGameStatePeriodicEventServer.select(
         TelemetryLogGameStatePeriodicEventServer.matchId,
         TelemetryLogGameStatePeriodicEventServer.poisonGasWarningPositionX,
-        TelemetryLogGameStatePeriodicEventServer.poisonGasWarningPositionY).where(
+        TelemetryLogGameStatePeriodicEventServer.poisonGasWarningPositionY,
+        fn.MAX(TelemetryLogGameStatePeriodicEventServer.isGame)).where(
         TelemetryLogGameStatePeriodicEventServer.matchId.in_(matches)).where(
-        TelemetryLogGameStatePeriodicEventServer.isGame >= 7).order_by(
-        TelemetryLogGameStatePeriodicEventServer.isGame.desc())
+        TelemetryLogGameStatePeriodicEventServer.isGame >= 7).group_by(TelemetryLogGameStatePeriodicEventServer.matchId)
 
 
 def fetch_live_server_telemetry(matches):
     return TelemetryLogGameStatePeriodicLiveServer.select(
         TelemetryLogGameStatePeriodicLiveServer.matchId,
         TelemetryLogGameStatePeriodicLiveServer.poisonGasWarningPositionX,
-        TelemetryLogGameStatePeriodicLiveServer.poisonGasWarningPositionY).where(
+        TelemetryLogGameStatePeriodicLiveServer.poisonGasWarningPositionY,
+        fn.MAX(TelemetryLogGameStatePeriodicLiveServer.isGame)).where(
         TelemetryLogGameStatePeriodicLiveServer.matchId.in_(matches)).where(
-        TelemetryLogGameStatePeriodicLiveServer.isGame >= 7).order_by(
-        TelemetryLogGameStatePeriodicLiveServer.isGame.desc())
+        TelemetryLogGameStatePeriodicLiveServer.isGame >= 7).group_by(TelemetryLogGameStatePeriodicLiveServer.matchId)
 
 
 def fetch_get_or_none_live_server_match_data(match_id):

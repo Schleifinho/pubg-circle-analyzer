@@ -1,11 +1,11 @@
 import logging
 
 # region General
-NUM_OF_THREADS = 4
+NUM_OF_THREADS = 8
 
 GREEN = "\033[92m"
 RESET = "\033[0m"
-LOGGING_LEVEL = logging.DEBUG
+LOGGING_LEVEL = logging.INFO
 
 DATE_DEFAULT = "01-01-2023"
 DATE_FORMAT = "%d-%m-%Y"

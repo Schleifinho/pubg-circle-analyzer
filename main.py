@@ -26,7 +26,7 @@ def get_tournaments_and_push_to_db():
     if tournaments['data'] and len(tournaments) > 0:
         push_tournament_list(tournaments['data'])
     else:
-        print("Tournament List Invalid!")
+        logger.error("Could Not Retrieve Tournament List!")
 
 
 def get_scrims_and_push_to_db(date_string):
@@ -45,7 +45,7 @@ def get_scrims_and_push_to_db(date_string):
                 push_tournament(_id=scrim_tourney, _type="scrim", _createdAt=tourney.createdAt)
 
                 if 'errors' in matches_response['data']:
-                    print("No matches for tourney " + tourney.id)
+                    logger.warning(f"No matches for tourney {tourney.id}")
                     continue
                 matches = matches_response['included']
 
@@ -61,9 +61,6 @@ def create_folder():
         os.makedirs(RESULTS_FOLDER)
 
     for mapi in MAPS:
-        if not os.path.exists(f"{RESULTS_FOLDER}/" + mapi[1].lower()):
-            os.makedirs(f"{RESULTS_FOLDER}/" + mapi[1].lower())
-
         if not os.path.exists(f"{RESULTS_FOLDER}/both/" + mapi[1].lower()):
             os.makedirs(f"{RESULTS_FOLDER}/both/" + mapi[1].lower())
         if not os.path.exists(f"{RESULTS_FOLDER}/live/" + mapi[1].lower()):

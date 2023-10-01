@@ -4,6 +4,7 @@ from config.pubg_api_config import HEADER_AUTH, HEADER_NO_AUTH, HEADER_TELEMETRY
     PREFIX_GET_TOURNAMENT_MATCH_INFO_URL, PREFIX_GET_TOURNAMENT_URL, PREFIX_GET_LIVE_MATCH_INFO_URL, \
     PREFIX_GET_PLAYER_STATS_URL
 from db.fetching_db import fetch_event_server_telemetry, fetch_live_server_telemetry
+from helper.my_logger import logger
 
 
 def get_tournament_match_info(match_id):
@@ -29,8 +30,7 @@ def get_player_stats(players):
 
 
 def get_tournament_matches(t_id):
-    url = PREFIX_GET_TOURNAMENT_URL + "/" + str(t_id) # TODO check url
-    print(url)
+    url = PREFIX_GET_TOURNAMENT_URL + "/" + str(t_id)
     response = requests.get(url, headers=HEADER_AUTH)
     if response is None:
         return []
@@ -65,8 +65,8 @@ def get_telemetry_data(server, matches_esport_live):
     elif server == "esport":
         return fetch_event_server_telemetry(matches_esport)
     else:
-        telemetry = fetch_event_server_telemetry(matches_esport)
-        telemetry += fetch_live_server_telemetry(matches_live)
+        telemetry = list(fetch_live_server_telemetry(matches_live))
+        telemetry += list(fetch_event_server_telemetry(matches_esport))
         return telemetry
 
 
