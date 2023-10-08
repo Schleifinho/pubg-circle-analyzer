@@ -8,7 +8,7 @@ from scripts.extract_tournament_circles import get_tournaments_and_push_to_db, g
 from scripts.generate_heat_map import create_heat_maps
 from helper.my_arg_parser import create_parser
 from helper.my_logger import logger
-from scripts.predict_zones import predict_svm
+from scripts.predict_zones import start_predicting_circles
 
 
 # endregion
@@ -71,8 +71,9 @@ def load_heatmaps(args):
 
 
 def load_predict(args):
-    c_map = args.maps[0]
-    predict_svm([], (4, 4), c_map)
+    use_map = [entry for entry in MAPS if entry[1].lower() in args.maps][0]
+    print(use_map)
+    start_predicting_circles(args.server, use_map, args.zone, args.date)
 
 
 # endregion

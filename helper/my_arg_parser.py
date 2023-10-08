@@ -15,21 +15,28 @@ def create_parser():
     # Create a mutually exclusive group for flags -a and -b
     mutually_exclusive_group = parser.add_mutually_exclusive_group(required=True)
 
-    # Define the mutually exclusive flags and associate them with their respective functions
+    # Init DB
     mutually_exclusive_group.add_argument("-i", "--init",
                                           action="store_true",
                                           help=f"{GREEN}Initialize DB and Folders{RESET}")
+    # Get tournaments and scrims
     mutually_exclusive_group.add_argument("-t", "--tournaments",
                                           action="store_true",
                                           help=f"{GREEN}Fetch Tournaments{RESET}")
+
+    # Extract Circles
     mutually_exclusive_group.add_argument("-e", "--extract",
                                           action="store_true",
                                           help=f"{GREEN}Extract Circles{RESET}\n"
                                                f"Optional Flag: '-maps'")
+
+    # Create Heatmaps
     mutually_exclusive_group.add_argument("-c", "--heatmaps",
                                           action="store_true",
                                           help=f"{GREEN}Create Heatmaps{RESET}\n"
                                                f"Optional flags: '-maps'")
+
+    # Predict Zones
     mutually_exclusive_group.add_argument("-p", "--predict",
                                           action="store_true",
                                           help=f"{GREEN}Predict Circles{RESET}\n"
@@ -79,7 +86,7 @@ def create_parser():
     )
 
     parser.add_argument(
-        "-zone",
+        "-z", "--zone",
         type=int,
         help=f"{GREEN}Set the Zone to predict{RESET}\n"
              f"Either Zone 4 (default) or 8",

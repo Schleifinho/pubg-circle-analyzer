@@ -6,27 +6,42 @@ import matplotlib.pylab as plt
 import numpy as np
 from tqdm import tqdm
 
-from config.config import RESULTS_FOLDER, DATE_FORMAT
-from db.fetching_db import fetch_matches, fetch_telemetry_data
+from config.config import RESULTS_FOLDER, DATE_FORMAT, ASSETS_FOLDER
+from db.fetching_db import fetch_telemetry_data, fetch_live_server_matches, fetch_event_server_matches
 from helper.my_logger import logger
+
 plt.style.use("seaborn")
+
+
 # endregion
 
 # region Create Heatmaps
+def fetch_matches(server, _map, date):
+    if server == "live":
+        print(_map)
+        return None, fetch_live_server_matches(_map, date)
+    elif server == "esport":
+        return fetch_event_server_matches(_map, date), None
+    else:
+        match_data_live = fetch_live_server_matches(_map, date)
+        match_data_esport = fetch_event_server_matches(_map, date)
+        return match_data_esport, match_data_live
+
+
+
 def create_heat_maps(server, maps, date_string):
     date = datetime.strptime(date_string, DATE_FORMAT)
 
     for map_i in tqdm(maps, desc="Generating for Map...", colour="green"):
         logger.debug(f"\nGenerating {map_i[1]}")
         matches_esport_live = fetch_matches(server, map_i[0], date)
-        selection = fetch_telemetry_data(server, matches_esport_live)
+        selection = fetch_telemetry_data(server, matches_esport_live, 7, or_greater=True)
 
         if len(selection) == 0:
             logger.info(f"No telemetry data for {map_i[1]} [{server}]!")
             continue
 
         circles = [{"x": match.poisonGasWarningPositionX, "y": match.poisonGasWarningPositionY} for match in selection]
-
 
         server_name = "E-SPORT" if server == "esport" else "LIVE" if server == "live" else "E-SPORT/LIVE"
         title = f"2023 {server_name} " + map_i[1] + " (# maps: " + str(len(circles)) + ")"
@@ -43,7 +58,7 @@ def create_heat_map_for_end_circles(circles, map_tuple, server, title, bw_adjust
     map_name = map_tuple[0].lower()
     map_name_pretty = map_tuple[1].lower()
 
-    img = plt.imread(f"assets/{map_name}.png")
+    img = plt.imread(f"{ASSETS_FOLDER}/{map_name}.png")
     fig, ax = plt.subplots(figsize=(16, 16))
 
     ticks = np.arange(0.0, 9, 1.02)
