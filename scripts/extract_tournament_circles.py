@@ -6,7 +6,6 @@ from math import ceil
 from config.config import NUM_OF_THREADS, DATE_FORMAT
 from tqdm import tqdm
 import time
-from db.db import Tournaments
 from db.fetching_db import fetch_get_or_none_telemetry_log_live_server, fetch_get_or_none_live_server_match_data, \
     fetch_get_or_none_tournament_match_data, fetch_get_or_none_telemetry_log_tournament, \
     fetch_tournament_matches_by_tournament_id, fetch_tournament_by_date_and_type, fetch_tournament_id_by_date, \
@@ -207,7 +206,7 @@ def start_extracting_esport_circles(tournament_ids, date_string):
 
     else:
         logger.debug(f"Load tournaments: {tournament_ids}")
-        tournaments = fetch_tournaments_by_ids_list(tournament_ids)
+        tournaments = list(fetch_tournaments_by_ids_list(tournament_ids))
 
     if len(tournaments) > 0:
         logger.info(f"Extracting Circles And Matches For {len(tournaments)} Tournaments")
@@ -239,10 +238,12 @@ def extract_matches_for_tournaments(tournaments_ids):
             for match in matches:
                 match_id = match['id']
                 if match['id'] not in already_fetched_matches:
-                    match_ids_to_fetch += match_id
+
+                    match_ids_to_fetch.append(match_id)
                 else:
                     logger.debug(f"already in {match_id}")
             if len(match_ids_to_fetch) > 0:
+                print(type(match_ids_to_fetch))
                 match_id_and_telemetry_urls = retrieve_matches_and_push_to_db_event(match_ids_to_fetch, tournament_id)
                 total_list_of_matches_and_telemetry_urls += match_id_and_telemetry_urls
 
@@ -256,6 +257,7 @@ def retrieve_matches_and_push_to_db_event(match_ids_to_fetch, tourney_ref):
             if fetch_get_or_none_telemetry_log_tournament(match_id) is not None:
                 continue
 
+        print(match_id)
         match_info_response = get_tournament_match_info(match_id)
 
         url, match_data, match_data_attributes = get_url_match_id_from_match_response(match_info_response, match_id)
@@ -352,7 +354,6 @@ def get_scrims_and_push_to_db(date_string):
             matches_response = get_tournament_matches(scrim_tourney)
 
             if "included" in matches_response:
-
                 push_tournament(_id=scrim_tourney, _type="scrim", _createdAt=tourney.createdAt)
 
                 if 'errors' in matches_response['data']:
@@ -360,7 +361,9 @@ def get_scrims_and_push_to_db(date_string):
                     continue
                 matches = matches_response['included']
 
-                match_id_and_telemetry_urls = retrieve_matches_and_push_to_db_event(matches, scrim_tourney)
+                match_ids = [m['id'] for m in matches]
+
+                match_id_and_telemetry_urls = retrieve_matches_and_push_to_db_event(match_ids, scrim_tourney)
                 total_list_of_matches_and_telemetry_urls += match_id_and_telemetry_urls
 
         time.sleep(7)

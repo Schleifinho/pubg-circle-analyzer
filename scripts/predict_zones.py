@@ -8,34 +8,12 @@ import matplotlib.pylab as plt
 
 from config.config import DATE_FORMAT, ASSETS_FOLDER, WINDOW_SIZE, CIRCLE_3_SIZE, CIRCLE_4_SIZE, PUBG_MAP_SIZE
 from db.fetching_db import fetch_live_server_telemetry_by_zones, \
-    fetch_live_server_matches, fetch_event_server_matches, fetch_event_server_telemetry_by_zones
+    fetch_live_server_matches, fetch_event_server_matches, fetch_event_server_telemetry_by_zones, fetch_matches, \
+    fetch_telemetry_data_poison_zone_per_phase
 from helper.my_logger import logger
-
+from helper.pubg_helper_functions import pubg_unit_to_pixel, pixel_to_pubg_unit
 
 # endregion
-
-def fetch_matches(server, _map, date):
-    if server == "live":
-        return None, fetch_live_server_matches(_map, date)
-    elif server == "esport":
-        return fetch_event_server_matches(_map, date), None
-    else:
-        match_data_live = fetch_live_server_matches(_map, date)
-        match_data_esport = fetch_event_server_matches(_map, date)
-        return match_data_esport, match_data_live
-
-
-def fetch_telemetry_data_to_predict_circles(server, matches_esport_live, zones):
-    matches_esport = matches_esport_live[0]
-    matches_live = matches_esport_live[1]
-    if server == "live":
-        return fetch_live_server_telemetry_by_zones(matches_live, zones)
-    elif server == "esport":
-        return fetch_event_server_telemetry_by_zones(matches_esport, zones)
-    else:
-        results = list(fetch_live_server_telemetry_by_zones(matches_live, zones))
-        results += list(fetch_event_server_telemetry_by_zones(matches_esport, zones))
-        return results
 
 
 # Initialize variables to store mouse coordinates
@@ -53,12 +31,6 @@ def get_mouse_position(event, x, y, flags, param):
         mouse_x_candidate, mouse_y_candidate = x, y
 
 
-def pixel_to_pubg_unit(pixel):
-    return pixel / WINDOW_SIZE * PUBG_MAP_SIZE
-
-
-def pubg_unit_to_pixel(pubg_unit):
-    return int(pubg_unit / PUBG_MAP_SIZE * WINDOW_SIZE)
 
 
 def train_svm(end_circles):
@@ -188,7 +160,7 @@ def start_predicting_circles(server, use_map, zone, date_string):
     map_pretty = use_map[0].lower()
 
     zones = [zone - 1, zone]
-    zone_start_and_predict = fetch_telemetry_data_to_predict_circles(server, matches_esport_live, zones)
+    zone_start_and_predict = fetch_telemetry_data_poison_zone_per_phase(server, matches_esport_live, zones)
 
     zone_start_and_predict_filtered = []
     for z in zone_start_and_predict:

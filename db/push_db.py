@@ -1,7 +1,7 @@
 # region Imports
 import peewee
 from db.db import Tournaments, TelemetryLogGameStatePeriodicEventServer, TelemetryLogGameStatePeriodicLiveServer, \
-    LiveServerMatchData
+    LiveServerMatchData, TournamentMatchData
 from helper.my_logger import logger
 
 
@@ -15,7 +15,7 @@ def push_tournament_list(tournament_list):
     for tourney in mapped_tournament_list:
         try:
             Tournaments.create(**tourney)
-        except peewee.Expression as e:
+        except Exception as e:
             logger.debug(e)
 
 
@@ -73,7 +73,7 @@ def push_live_server_match_data(_matchId, _mapName, _isCustomMatch, _duration, _
 def push_tournament_match_data(_matchId, _mapName, _isCustomMatch, _duration, _shardId, _gameMode, _createdAt,
                                _matchType, _telemetryURL, _tournamentId):
     try:
-        LiveServerMatchData.create(matchId=_matchId,
+        TournamentMatchData.create(matchId=_matchId,
                                    mapName=_mapName,
                                    isCustomMatch=_isCustomMatch,
                                    duration=_duration,

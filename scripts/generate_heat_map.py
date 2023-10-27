@@ -7,7 +7,7 @@ import numpy as np
 from tqdm import tqdm
 
 from config.config import RESULTS_FOLDER, DATE_FORMAT, ASSETS_FOLDER
-from db.fetching_db import fetch_telemetry_data, fetch_live_server_matches, fetch_event_server_matches
+from db.fetching_db import fetch_telemetry_data, fetch_live_server_matches, fetch_event_server_matches, fetch_matches
 from helper.my_logger import logger
 
 plt.style.use("seaborn")
@@ -16,32 +16,23 @@ plt.style.use("seaborn")
 # endregion
 
 # region Create Heatmaps
-def fetch_matches(server, _map, date):
-    if server == "live":
-        print(_map)
-        return None, fetch_live_server_matches(_map, date)
-    elif server == "esport":
-        return fetch_event_server_matches(_map, date), None
-    else:
-        match_data_live = fetch_live_server_matches(_map, date)
-        match_data_esport = fetch_event_server_matches(_map, date)
-        return match_data_esport, match_data_live
-
 
 
 def create_heat_maps(server, maps, date_string):
     date = datetime.strptime(date_string, DATE_FORMAT)
 
     for map_i in tqdm(maps, desc="Generating for Map...", colour="green"):
-        logger.debug(f"\nGenerating {map_i[1]}")
+        logger.debug(f"\n{map_i[1]}")
         matches_esport_live = fetch_matches(server, map_i[0], date)
-        selection = fetch_telemetry_data(server, matches_esport_live, 7, or_greater=True)
+        selection = fetch_telemetry_data(server, matches_esport_live, 4, or_greater=False)
 
         if len(selection) == 0:
             logger.info(f"No telemetry data for {map_i[1]} [{server}]!")
             continue
 
         circles = [{"x": match.poisonGasWarningPositionX, "y": match.poisonGasWarningPositionY} for match in selection]
+
+        logger.debug(f"Matches found: {len(circles)}")
 
         server_name = "E-SPORT" if server == "esport" else "LIVE" if server == "live" else "E-SPORT/LIVE"
         title = f"2023 {server_name} " + map_i[1] + " (# maps: " + str(len(circles)) + ")"

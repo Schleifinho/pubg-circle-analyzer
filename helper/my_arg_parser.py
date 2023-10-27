@@ -42,6 +42,12 @@ def create_parser():
                                           help=f"{GREEN}Predict Circles{RESET}\n"
                                                f"Starting from Zone 3, predict Zone 4 (default) or 8")
 
+    # Create Histogram Of Zones
+    mutually_exclusive_group.add_argument("-hist", "--histogram",
+                                          action="store_true",
+                                          help=f"{GREEN}Create Histogram{RESET}\n"
+                                               f"Create Histogram For Zone 4 (default) or 8")
+
     parser.add_argument(
         "-pl", "--player_list",
         nargs='+',  # Indicates that the flag accepts multiple arguments
@@ -57,6 +63,16 @@ def create_parser():
         help=f"{GREEN}List of Tournament IDs to extract data from{RESET}\n"
              "This flag is OPTIONAL for extracting event server data!\n"
              "Not setting this flag will use all available tournaments"
+    )
+
+    parser.add_argument(
+        "-t_type", "--tournament_type",
+        type=str,
+        help=f"{GREEN}Type Of Tournament To Add{RESET}\n"
+             f"FORMAT: dd-mm-yyyy\n"
+             f"Not setting this flag uses the DEFAULT Date from the config",
+        choices=["tournament", "scrim"],
+        default="tournament"
     )
 
     # Define additional flags that are not mutually exclusive with -a and -b
@@ -97,12 +113,14 @@ def create_parser():
     # Parse the command-line arguments
     args = parser.parse_args()
 
-    if args.extract and (args.server == "both" or args.server == "players") and not args.player_list:
-        logger.error("Set '-player' Flag If Live Server Is Used!")
+    if args.extract and (args.server == "both" or args.server == "live") and not args.player_list:
+        logger.error("Set '-pl' or '--playerlist' Flag If Extracting Matches From Live Servers!")
         parser.exit()
 
     if args.predict and len(args.maps) != 1:
-        logger.error("'-map' Flag Issue: Specify Exactly One Map!")
+        logger.error("'-maps' Flag Issue: Specify Exactly One Map!")
         parser.exit()
+
+
     return args
 # endregion

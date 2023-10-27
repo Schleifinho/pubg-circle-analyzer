@@ -1,6 +1,9 @@
 # region Imports
+import datetime
 import os
-from config.config import MAPS, RESULTS_FOLDER
+from sqlite3 import Date
+
+from config.config import MAPS, RESULTS_FOLDER, HISTOGRAMS_FOLDER
 from db.db import Tournaments, TournamentMatchData, \
     LiveServerMatchData, TelemetryLogGameStatePeriodicEventServer, TelemetryLogGameStatePeriodicLiveServer, mysqlDB
 from scripts.extract_tournament_circles import get_tournaments_and_push_to_db, get_scrims_and_push_to_db, \
@@ -8,6 +11,7 @@ from scripts.extract_tournament_circles import get_tournaments_and_push_to_db, g
 from scripts.generate_heat_map import create_heat_maps
 from helper.my_arg_parser import create_parser
 from helper.my_logger import logger
+from scripts.generate_histogram import start_generating_histogram
 from scripts.predict_zones import start_predicting_circles
 
 
@@ -33,7 +37,20 @@ def create_folder():
             os.makedirs(f"{RESULTS_FOLDER}/esport/" + mapi[1].lower())
 
 
+def create_folder_hist():
+    if not os.path.exists(HISTOGRAMS_FOLDER):
+        os.makedirs(HISTOGRAMS_FOLDER)
+
+    for mapi in MAPS:
+        if not os.path.exists(f"{HISTOGRAMS_FOLDER}/both/" + mapi[1].lower()):
+            os.makedirs(f"{HISTOGRAMS_FOLDER}/both/" + mapi[1].lower())
+        if not os.path.exists(f"{HISTOGRAMS_FOLDER}/live/" + mapi[1].lower()):
+            os.makedirs(f"{HISTOGRAMS_FOLDER}/live/" + mapi[1].lower())
+        if not os.path.exists(f"{HISTOGRAMS_FOLDER}/esport/" + mapi[1].lower()):
+            os.makedirs(f"{HISTOGRAMS_FOLDER}/esport/" + mapi[1].lower())
+
 # endregion
+
 
 # region Load Commands
 def load_init():
@@ -42,8 +59,12 @@ def load_init():
 
 
 def load_tournaments(args):
-    get_tournaments_and_push_to_db()
-    get_scrims_and_push_to_db(args.date)
+    if args.tournament_ids is None:
+        get_tournaments_and_push_to_db()
+        get_scrims_and_push_to_db(args.date)
+    else:
+        for t_id in args.t_ids:
+            Tournaments.create(id=t_id, createdAt=args.date, type=args.t_type)
 
 
 def load_extract(args):
@@ -79,6 +100,20 @@ def load_predict(args):
 # endregion
 
 # region Main
+
+
+
+def load_histogram(args):
+    create_folder_hist()
+    if args.maps:
+        maps = [entry for entry in MAPS if entry[1].lower() in args.maps]
+    else:
+        maps = MAPS
+
+    start_generating_histogram(args.server, maps, args.date, args.zone)
+
+
+
 def main():
     args = create_parser()
     mysqlDB.connect()
@@ -98,6 +133,9 @@ def main():
     elif args.predict:
         logger.info("Load Predict")
         load_predict(args)
+    elif args.histogram:
+        logger.info("Load Histogram")
+        load_histogram(args)
 
     mysqlDB.close()
 

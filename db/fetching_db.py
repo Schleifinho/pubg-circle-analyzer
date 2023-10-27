@@ -170,4 +170,28 @@ def fetch_tournament_id_by_date(date):
 
 def fetch_tournaments_by_ids_list(tournament_ids):
     return Tournaments.select().where(Tournaments.id.in_(tournament_ids))
+
+
+def fetch_matches(server, _map, date):
+    if server == "live":
+        return None, fetch_live_server_matches(_map, date)
+    elif server == "esport":
+        return fetch_event_server_matches(_map, date), None
+    else:
+        match_data_live = fetch_live_server_matches(_map, date)
+        match_data_esport = fetch_event_server_matches(_map, date)
+        return match_data_esport, match_data_live
+
+
+def fetch_telemetry_data_poison_zone_per_phase(server, matches_esport_live, zones):
+    matches_esport = matches_esport_live[0]
+    matches_live = matches_esport_live[1]
+    if server == "live":
+        return fetch_live_server_telemetry_by_zones(matches_live, zones)
+    elif server == "esport":
+        return fetch_event_server_telemetry_by_zones(matches_esport, zones)
+    else:
+        results = list(fetch_live_server_telemetry_by_zones(matches_live, zones))
+        results += list(fetch_event_server_telemetry_by_zones(matches_esport, zones))
+        return results
 # endregion
