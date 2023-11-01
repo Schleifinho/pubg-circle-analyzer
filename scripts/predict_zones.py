@@ -6,10 +6,8 @@ import pandas as pd
 from sklearn import svm
 import matplotlib.pylab as plt
 
-from config.config import DATE_FORMAT, ASSETS_FOLDER, WINDOW_SIZE, CIRCLE_3_SIZE, CIRCLE_4_SIZE, PUBG_MAP_SIZE
-from db.fetching_db import fetch_live_server_telemetry_by_zones, \
-    fetch_live_server_matches, fetch_event_server_matches, fetch_event_server_telemetry_by_zones, fetch_matches, \
-    fetch_telemetry_data_poison_zone_per_phase
+from config.config import DATE_FORMAT, ASSETS_FOLDER, WINDOW_SIZE, CIRCLE_3_SIZE, CIRCLE_4_SIZE
+from db.fetching_db import fetch_matches, fetch_telemetry_data_poison_zone_per_phase
 from helper.my_logger import logger
 from helper.pubg_helper_functions import pubg_unit_to_pixel, pixel_to_pubg_unit
 

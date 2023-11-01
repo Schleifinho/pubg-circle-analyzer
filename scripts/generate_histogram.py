@@ -1,14 +1,12 @@
 from datetime import datetime
-
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 from tqdm import tqdm
-import matplotlib.cm as cm
-from config.config import DATE_FORMAT, CIRCLE_4_SIZE, WINDOW_SIZE, ASSETS_FOLDER, CIRCLE_3_SIZE, RESULTS_FOLDER, \
-    HISTOGRAMS_FOLDER
-from config.histogram_config import THRESHOLD_RANGE
-from db.fetching_db import fetch_telemetry_data, fetch_matches, fetch_telemetry_data_poison_zone_per_phase
+from config.config import DATE_FORMAT, CIRCLE_4_SIZE, WINDOW_SIZE, ASSETS_FOLDER, CIRCLE_3_SIZE, HISTOGRAMS_FOLDER
+from config.histogram_config import THRESHOLD_RANGE, COLOR_WHITE, COLOR_BLACK
+from db.fetching_db import fetch_matches, fetch_telemetry_data_poison_zone_per_phase
+from helper.legend_line import LegendLine
 from helper.my_logger import logger
 from helper.pubg_helper_functions import pubg_unit_to_pixel
 
@@ -20,31 +18,61 @@ def load_bg_image_and_resize(map_name):
     return img_resized
 
 
-def add_legend_to_image(res, text_Lines):
-    width = 375
-    height = 120
-    background = np.zeros(res.shape, dtype=np.float32)
-
-    font = cv2.FONT_HERSHEY_COMPLEX_SMALL
-    font_scale = 1
-    font_color = (0, 0, 0)  # Text color in BGR format
+def add_credits_to_legend(res, width, height):
+    line = (width - 90, height - 10)
+    font_color = (0.25, 0.25, 0.25)
+    font_scale = 0.5
     font_thickness = 1
-    font_line_type = cv2.LINE_AA  # Use anti-aliased line type
+    font_line_type = cv2.FONT_ITALIC
 
-    line_height_padding = 30
-    line_width_padding = 25
-
-    background[0:height, 0:width] = 1
-
-    res = cv2.addWeighted(background, .5, res, 1,0)
-    for index, text in enumerate(text_Lines):
-        line = (line_width_padding, (index + 1) * line_height_padding)
-        cv2.putText(res, text, line, font, font_scale, font_color, font_thickness, font_line_type)
+    cv2.putText(res, "@Schleifinho", line, cv2.FONT_HERSHEY_COMPLEX_SMALL, font_scale, font_color, font_thickness,
+                font_line_type)
 
     return res
 
 
-def create_histogram(circles, map_name_tuple, server):
+def prepare_legend_background(res_shape, width, height):
+    background = np.zeros(res_shape, dtype=np.float32)
+    background[0: height, 0: width] = 1
+    return background
+
+
+
+
+def add_color_map_to_bg(res, width, line_width_padding, line_height_padding):
+    colormap_jet = cv2.imread(f"{ASSETS_FOLDER}/colorscale_jet.jpg")
+    colormap_jet = cv2.resize(colormap_jet, (width - 2 * line_width_padding, line_height_padding))
+    h, w, _ = colormap_jet.shape
+    jet_height = int(3.3 * line_height_padding)
+    jet_width = line_width_padding
+    res[jet_height:jet_height + h, jet_width:jet_width + w] = colormap_jet / 255
+    return res
+
+
+def add_legend_to_image(res, circles_len, date):
+    lines = [LegendLine(f"Number Of Maps: {circles_len}"),
+             LegendLine(f"Since: {date}"),
+             LegendLine("Not In Zone 4 Percentage"),
+             LegendLine(f"{int(THRESHOLD_RANGE * 100)}%                   100%", color=COLOR_WHITE)]
+    width = 375
+    height = 150
+    line_height_padding = 30
+    line_width_padding = 25
+
+    background = prepare_legend_background(res.shape, width, height)
+    res = cv2.addWeighted(background, .67, res, 1, 0)
+    res = add_color_map_to_bg(res, width, line_width_padding, line_height_padding)
+
+    for index, legend_line in enumerate(lines):
+        line = (line_width_padding, (index + 1) * line_height_padding)
+        cv2.putText(res, legend_line.text, line, legend_line.font, legend_line.scale, legend_line.color,
+                    legend_line.font_thickness, legend_line.font_line_type)
+
+    res = add_credits_to_legend(res, width, height)
+    return res
+
+
+def create_histogram(circles, map_name_tuple, server, date):
     map_name = map_name_tuple[0].lower()
     map_name_pretty = map_name_tuple[1].lower()
     histogram_zone_3 = np.zeros((WINDOW_SIZE, WINDOW_SIZE), dtype=np.uint32)
@@ -53,8 +81,6 @@ def create_histogram(circles, map_name_tuple, server):
     radius_z3 = pubg_unit_to_pixel(CIRCLE_3_SIZE)
 
     # Create a blank image
-
-    rectangle_color = 1
     for circle in circles:
         circle_zone_3 = np.zeros((WINDOW_SIZE, WINDOW_SIZE), dtype=np.uint8)
         circle_shift = np.zeros((WINDOW_SIZE, WINDOW_SIZE), dtype=np.uint8)
@@ -63,9 +89,9 @@ def create_histogram(circles, map_name_tuple, server):
         x_pos_z4 = pubg_unit_to_pixel(circle['x_zone_4'])
         y_pos_z4 = pubg_unit_to_pixel(circle['y_zone_4'])
 
-        cv2.circle(circle_zone_3, (x_pos_z3, y_pos_z3), radius_z3, 1, -1)
-        cv2.circle(circle_shift, (x_pos_z3, y_pos_z3), radius_z3, 1, -1)
-        cv2.circle(circle_shift, (x_pos_z4, y_pos_z4), radius_z4, 0, -1)
+        cv2.circle(circle_zone_3, (x_pos_z3, y_pos_z3), radius_z3, COLOR_WHITE, -1)
+        cv2.circle(circle_shift, (x_pos_z3, y_pos_z3), radius_z3, COLOR_WHITE, -1)
+        cv2.circle(circle_shift, (x_pos_z4, y_pos_z4), radius_z4, COLOR_BLACK, -1)
 
         histogram_zone_3 += circle_zone_3
         histogram_shifts += circle_shift
@@ -74,16 +100,14 @@ def create_histogram(circles, map_name_tuple, server):
     histogram_shifts[histogram_shifts == 0] = 0
 
     histogram = (histogram_shifts / histogram_zone_3)
-    # q1 = np.quantile(histogram, .67)
-
     histogram[histogram < THRESHOLD_RANGE] = 0
 
     kernel_size = 5  # Adjust this as needed
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (kernel_size, kernel_size))
     histogram = cv2.morphologyEx(histogram, cv2.MORPH_CLOSE, kernel)
 
-    mask = histogram > 0
     # Get the minimum value greater than 0
+    mask = histogram > 0
     min_val = histogram[mask].min()
     max_val = np.max(histogram)
     normalized_histogram = ((histogram - min_val) / (max_val - min_val))
@@ -100,13 +124,11 @@ def create_histogram(circles, map_name_tuple, server):
     colormap = colormap.astype(np.float32) / 255
     bg = cv2.cvtColor(bg, cv2.COLOR_RGBA2RGB)
 
-    res = cv2.addWeighted(colormap, 0.333, bg, 1, 0)
-    text = [f"Number Of Maps: {len(circles)}", "Not In Zone 4 Percentage", f"{int(THRESHOLD_RANGE * 100)}% (Blue) - 100% (Red)"]
-    res = add_legend_to_image(res, text)
+    res = cv2.addWeighted(colormap, 0.5, bg, 1, 0)
+    res = add_legend_to_image(res, len(circles), date)
 
     percentage = str(THRESHOLD_RANGE).replace(".", "_")
     folder_and_name = f"{HISTOGRAMS_FOLDER}/{server}/{map_name_pretty}/{map_name}_{percentage}.jpg"
-
     cv2.imwrite(f"{folder_and_name}", res * 255)
 
 
@@ -142,6 +164,6 @@ def start_generating_histogram(server, maps, date_string, zone):
                     {"x_zone_3": int(float(x_before_zone)), "y_zone_3": int(float(y_before_zone)),
                      "x_zone_4": int(float(x_after_zone)), "y_zone_4": int(float(y_after_zone))})
             except Exception as e:
-                print(e)
+                logger.debug(e)
 
-        create_histogram(zone_3_and_4, map_i, server)
+        create_histogram(zone_3_and_4, map_i, server, date_string)

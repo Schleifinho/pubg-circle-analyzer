@@ -6,8 +6,8 @@ import matplotlib.pylab as plt
 import numpy as np
 from tqdm import tqdm
 
-from config.config import RESULTS_FOLDER, DATE_FORMAT, ASSETS_FOLDER
-from db.fetching_db import fetch_telemetry_data, fetch_live_server_matches, fetch_event_server_matches, fetch_matches
+from config.config import DATE_FORMAT, ASSETS_FOLDER, HEATMAPS_FOLDER
+from db.fetching_db import fetch_telemetry_data, fetch_matches
 from helper.my_logger import logger
 
 plt.style.use("seaborn")
@@ -72,7 +72,7 @@ def create_heat_map_for_end_circles(circles, map_tuple, server, title, bw_adjust
     sns.kdeplot(data=df, x='x', y='y', fill=True, alpha=0.5, legend=True, levels=50, gridsize=400, ax=ax,
                 bw_adjust=bw_adjust, cmap='Spectral_r', cbar=True, warn_singular=False)  # turbo
 
-    folder = f"{RESULTS_FOLDER}/{server}/{map_name_pretty}/"
+    folder = f"{HEATMAPS_FOLDER}/{server}/{map_name_pretty}/"
     plt.savefig(folder + map_name_pretty + '_heatmap_' + str(bw_adjust).replace(".", "_") + '.png')
 
     sns.scatterplot(data=df, x='x', y='y', s=75, label="End Circles", marker='o', edgecolor="white")

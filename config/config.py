@@ -16,7 +16,8 @@ DATE_FORMAT = "%d-%m-%Y"
 # region HEATMAP CONFIG
 
 RESULTS_FOLDER = "./results"
-HISTOGRAMS_FOLDER = "./histograms"
+HEATMAPS_FOLDER = f"{RESULTS_FOLDER}/heatmaps"
+HISTOGRAMS_FOLDER = f"{RESULTS_FOLDER}/histograms"
 ASSETS_FOLDER = "./assets"
 
 # should be same index in pretty

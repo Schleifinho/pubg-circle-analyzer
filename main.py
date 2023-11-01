@@ -1,9 +1,7 @@
 # region Imports
-import datetime
 import os
-from sqlite3 import Date
 
-from config.config import MAPS, RESULTS_FOLDER, HISTOGRAMS_FOLDER
+from config.config import MAPS, RESULTS_FOLDER, HISTOGRAMS_FOLDER, HEATMAPS_FOLDER
 from db.db import Tournaments, TournamentMatchData, \
     LiveServerMatchData, TelemetryLogGameStatePeriodicEventServer, TelemetryLogGameStatePeriodicLiveServer, mysqlDB
 from scripts.extract_tournament_circles import get_tournaments_and_push_to_db, get_scrims_and_push_to_db, \
@@ -19,25 +17,17 @@ from scripts.predict_zones import start_predicting_circles
 
 # region Inits
 def create_db_and_tables():
-    # create_db()
     mysqlDB.create_tables([LiveServerMatchData, Tournaments, TournamentMatchData,
                            TelemetryLogGameStatePeriodicEventServer, TelemetryLogGameStatePeriodicLiveServer])
 
 
-def create_folder():
+def create_results_folder():
     if not os.path.exists(RESULTS_FOLDER):
         os.makedirs(RESULTS_FOLDER)
 
-    for mapi in MAPS:
-        if not os.path.exists(f"{RESULTS_FOLDER}/both/" + mapi[1].lower()):
-            os.makedirs(f"{RESULTS_FOLDER}/both/" + mapi[1].lower())
-        if not os.path.exists(f"{RESULTS_FOLDER}/live/" + mapi[1].lower()):
-            os.makedirs(f"{RESULTS_FOLDER}/live/" + mapi[1].lower())
-        if not os.path.exists(f"{RESULTS_FOLDER}/esport/" + mapi[1].lower()):
-            os.makedirs(f"{RESULTS_FOLDER}/esport/" + mapi[1].lower())
 
-
-def create_folder_hist():
+def create_histograms_folder():
+    create_results_folder()
     if not os.path.exists(HISTOGRAMS_FOLDER):
         os.makedirs(HISTOGRAMS_FOLDER)
 
@@ -49,13 +39,28 @@ def create_folder_hist():
         if not os.path.exists(f"{HISTOGRAMS_FOLDER}/esport/" + mapi[1].lower()):
             os.makedirs(f"{HISTOGRAMS_FOLDER}/esport/" + mapi[1].lower())
 
+
+def create_heatmaps_folder():
+    create_results_folder()
+    if not os.path.exists(HEATMAPS_FOLDER):
+        os.makedirs(HEATMAPS_FOLDER)
+
+    for mapi in MAPS:
+        if not os.path.exists(f"{HEATMAPS_FOLDER}/both/" + mapi[1].lower()):
+            os.makedirs(f"{HEATMAPS_FOLDER}/both/" + mapi[1].lower())
+        if not os.path.exists(f"{HEATMAPS_FOLDER}/live/" + mapi[1].lower()):
+            os.makedirs(f"{HEATMAPS_FOLDER}/live/" + mapi[1].lower())
+        if not os.path.exists(f"{HEATMAPS_FOLDER}/esport/" + mapi[1].lower()):
+            os.makedirs(f"{HEATMAPS_FOLDER}/esport/" + mapi[1].lower())
+
 # endregion
 
 
 # region Load Commands
 def load_init():
     create_db_and_tables()
-    create_folder()
+    create_histograms_folder()
+    create_heatmaps_folder()
 
 
 def load_tournaments(args):
@@ -83,7 +88,7 @@ def load_extract(args):
 
 
 def load_heatmaps(args):
-    create_folder()
+    create_heatmaps_folder()
     if args.maps:
         maps = [entry for entry in MAPS if entry[1].lower() in args.maps]
     else:
@@ -93,7 +98,7 @@ def load_heatmaps(args):
 
 def load_predict(args):
     use_map = [entry for entry in MAPS if entry[1].lower() in args.maps][0]
-    print(use_map)
+    logger.info(f"Predict Map: {use_map}")
     start_predicting_circles(args.server, use_map, args.zone, args.date)
 
 
@@ -101,17 +106,14 @@ def load_predict(args):
 
 # region Main
 
-
-
 def load_histogram(args):
-    create_folder_hist()
+    create_histograms_folder()
     if args.maps:
         maps = [entry for entry in MAPS if entry[1].lower() in args.maps]
     else:
         maps = MAPS
 
     start_generating_histogram(args.server, maps, args.date, args.zone)
-
 
 
 def main():
@@ -128,13 +130,13 @@ def main():
         logger.info("Load Extract")
         load_extract(args)
     elif args.heatmaps:
-        logger.info("Load Heatmaps")
+        logger.info("Create Heatmaps")
         load_heatmaps(args)
     elif args.predict:
         logger.info("Load Predict")
         load_predict(args)
     elif args.histogram:
-        logger.info("Load Histogram")
+        logger.info("Create Histogram")
         load_histogram(args)
 
     mysqlDB.close()
