@@ -143,6 +143,6 @@ After making any changes to these configuration settings, make sure to save the 
 
 ## License
 
-This PUBG Circle Analyzer Tool is available under the **MIT License**.
+This PUBG Circle Analyzer Tool is available under the **Creative Commons Attribution 4.0 International License**. This license requires that you provide proper attribution to the original author when you use, modify, or distribute this tool.
 
-Start using the PUBG Circle Analyzer Tool to gain valuable insights into your PUBG gameplay or tournaments. Happy analyzing!
+Please review the [LICENSE.md](LICENSE.md) file for the full text of the Creative Commons Attribution 4.0 International License and details on how to provide proper attribution.
