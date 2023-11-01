@@ -110,6 +110,14 @@ def create_parser():
         default=4
     )
 
+    parser.add_argument("-m", "--mode",
+                        type=str,
+                        help=f"{GREEN}Set Mode For Predictions{RESET}\n"
+                             "'SVR' - Support Vector Machines Classifier\n"
+                             "'KNN' - K-Nearest Neighbors\n",
+                        choices=["SVC", "KNN"],
+                        default="KNN")
+
     # Parse the command-line arguments
     args = parser.parse_args()
 

@@ -99,7 +99,7 @@ def load_heatmaps(args):
 def load_predict(args):
     use_map = [entry for entry in MAPS if entry[1].lower() in args.maps][0]
     logger.info(f"Predict Map: {use_map}")
-    start_predicting_circles(args.server, use_map, args.zone, args.date)
+    start_predicting_circles(args.server, use_map, args.zone, args.date, args.mode)
 
 
 # endregion

@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from sklearn import svm
 import matplotlib.pylab as plt
-
+from sklearn.neighbors import KNeighborsRegressor
 from config.config import DATE_FORMAT, ASSETS_FOLDER, WINDOW_SIZE, CIRCLE_3_SIZE, CIRCLE_4_SIZE
 from db.fetching_db import fetch_matches, fetch_telemetry_data_poison_zone_per_phase
 from helper.my_logger import logger
@@ -47,6 +47,24 @@ def train_svm(end_circles):
 
     logger.info(f"Done")
     return svc_x, svc_y
+
+
+def train_knn(end_circles):
+    logger.info(f"Training Model...")
+    df = pd.DataFrame(columns=['x_before_zone', 'y_before_zone', 'x_predict_zone', 'y_predict_zone'], data=end_circles)
+
+    train_data = df[['x_before_zone', 'y_before_zone']].values
+    predict_x = df['x_predict_zone'].values
+    predict_y = df['y_predict_zone'].values
+
+    # Create and fit a KNN regressor
+    knn_regressor_x = KNeighborsRegressor(n_neighbors=5)  # You can adjust the number of neighbors
+    knn_regressor_y = KNeighborsRegressor(n_neighbors=5)  # You can adjust the number of neighbors
+    knn_regressor_x.fit(train_data, predict_x)
+    knn_regressor_y.fit(train_data, predict_y)
+
+    logger.info(f"Done")
+    return knn_regressor_x, knn_regressor_y
 
 
 def load_bg_image_and_resize(map_name):
@@ -111,8 +129,11 @@ def start_predict_loop(background_image, svc_x, svc_y, window_name):
             x_pubg = pixel_to_pubg_unit(mouse_x_candidate)
             y_pubg = pixel_to_pubg_unit(mouse_y_candidate)
 
-            middle_x = pubg_unit_to_pixel(svc_x.predict([(x_pubg, y_pubg)]))
-            middle_y = pubg_unit_to_pixel(svc_y.predict([(x_pubg, y_pubg)]))
+
+            candidate_x = svc_x.predict([(x_pubg, y_pubg)])
+            candidate_y = svc_y.predict([(x_pubg, y_pubg)])
+            middle_x = pubg_unit_to_pixel(candidate_x)
+            middle_y = pubg_unit_to_pixel(candidate_y)
 
             draw_circle_at(circle_predict_image, mouse_x_candidate, mouse_y_candidate, pixel_radius_circle_3,
                            circle_live_color)
@@ -152,7 +173,7 @@ def open_predict_window(map_name, svc_x, svc_y):
         start_predict_loop(background_image, svc_x, svc_y, window_name)
 
 
-def start_predicting_circles(server, use_map, zone, date_string):
+def start_predicting_circles(server, use_map, zone, date_string, mode):
     date = datetime.strptime(date_string, DATE_FORMAT)
     matches_esport_live = fetch_matches(server, use_map[0], date)
     map_pretty = use_map[0].lower()
@@ -186,6 +207,13 @@ def start_predicting_circles(server, use_map, zone, date_string):
         except Exception as e:
             print(e)
 
-    logger.info(F"# Matches: {len(zone_start_and_predict_filtered)}")
-    svc_x, svc_y = train_svm(zone_start_and_predict_filtered)
+    logger.info(f"# Matches: {len(zone_start_and_predict_filtered)}")
+
+    if mode == "SVC":
+        svc_x, svc_y = train_svm(zone_start_and_predict_filtered)
+    elif mode == "KNN":
+        svc_x, svc_y = train_knn(zone_start_and_predict_filtered)
+    else:
+        logger.error("Please use a valid prediction mode")
+        return
     open_predict_window(map_pretty, svc_x, svc_y)

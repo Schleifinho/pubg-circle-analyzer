@@ -3,8 +3,6 @@ import peewee
 from db.db import Tournaments, TelemetryLogGameStatePeriodicEventServer, TelemetryLogGameStatePeriodicLiveServer, \
     LiveServerMatchData, TournamentMatchData
 from helper.my_logger import logger
-
-
 # endregion
 
 # region Push To DB
