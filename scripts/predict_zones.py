@@ -6,7 +6,7 @@ import pandas as pd
 from sklearn import svm
 import matplotlib.pylab as plt
 from sklearn.neighbors import KNeighborsRegressor
-from config.config import DATE_FORMAT, ASSETS_FOLDER, WINDOW_SIZE, CIRCLE_3_SIZE, CIRCLE_4_SIZE
+from config.config import DATE_FORMAT, ASSETS_FOLDER, WINDOW_SIZE, CIRCLE_3_SIZE, CIRCLE_4_SIZE, CIRCLE_8_SIZE
 from db.fetching_db import fetch_matches, fetch_telemetry_data_poison_zone_per_phase
 from helper.my_logger import logger
 from helper.pubg_helper_functions import pubg_unit_to_pixel, pixel_to_pubg_unit
@@ -101,7 +101,7 @@ def draw_circle_at(img, x, y, radius, color):
     cv2.circle(img, (x, y), radius, color, -1)
 
 
-def start_predict_loop(background_image, svc_x, svc_y, window_name):
+def start_predict_loop(background_image, svc_x, svc_y, window_name, predicted_circle_radius):
     global mouse_x_candidate
     global mouse_y_candidate
     circle_predict_image = get_circle_overlay_image(background_image)
@@ -110,7 +110,7 @@ def start_predict_loop(background_image, svc_x, svc_y, window_name):
     circle_live_color = (1.0, 0.0, 0.0)
 
     pixel_radius_circle_3 = pubg_unit_to_pixel(CIRCLE_3_SIZE)
-    pixel_radius_circle_4 = pubg_unit_to_pixel(CIRCLE_4_SIZE)
+    pixel_radius_circle_4 = pubg_unit_to_pixel(predicted_circle_radius)
 
     while True:
         # Copy the original image to avoid overwriting the drawn circle
@@ -160,7 +160,7 @@ def get_circle_overlay_image(background_image):
     return img
 
 
-def open_predict_window(map_name, svc_x, svc_y):
+def open_predict_window(map_name, svc_x, svc_y, predicted_circle_radius):
     background_image = load_bg_image_and_resize(map_name)
 
     window_name = f"Predict: {map_name.upper()}"
@@ -170,7 +170,7 @@ def open_predict_window(map_name, svc_x, svc_y):
     if background_image is None:
         logger.error(f"{ASSETS_FOLDER}/{map_name}.png does not exist!")
     else:
-        start_predict_loop(background_image, svc_x, svc_y, window_name)
+        start_predict_loop(background_image, svc_x, svc_y, window_name, predicted_circle_radius)
 
 
 def start_predicting_circles(server, use_map, zone, date_string, mode):
@@ -178,7 +178,11 @@ def start_predicting_circles(server, use_map, zone, date_string, mode):
     matches_esport_live = fetch_matches(server, use_map[0], date)
     map_pretty = use_map[0].lower()
 
-    zones = [zone - 1, zone]
+    if zone == 4:
+        zones = [zone - 1, zone]
+    else:
+        zones = [3, 8]
+
     zone_start_and_predict = fetch_telemetry_data_poison_zone_per_phase(server, matches_esport_live, zones)
 
     zone_start_and_predict_filtered = []
@@ -216,4 +220,6 @@ def start_predicting_circles(server, use_map, zone, date_string, mode):
     else:
         logger.error("Please use a valid prediction mode")
         return
-    open_predict_window(map_pretty, svc_x, svc_y)
+
+    predicted_circle_radius = CIRCLE_4_SIZE if zone == 4 else CIRCLE_8_SIZE
+    open_predict_window(map_pretty, svc_x, svc_y, predicted_circle_radius)

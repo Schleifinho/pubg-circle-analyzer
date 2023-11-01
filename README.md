@@ -109,6 +109,7 @@ To see better descriptions of available options and explore further customizatio
 
     ```shell
     python3 ./main.py -h
+   
 ## Adding Your PUBG API Code
 
 To use the PUBG Circle Analyzer Tool effectively, you need to add your PUBG API key to the `pubg_api_config.py` file. This API key is required for accessing PUBG match data and other game-related information. Follow these steps to set up your API key:
