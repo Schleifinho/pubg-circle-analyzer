@@ -1,4 +1,5 @@
 # region Imports
+import logger
 import requests
 from config.pubg_api_config import HEADER_AUTH, HEADER_NO_AUTH, HEADER_TELEMETRY, \
     PREFIX_GET_TOURNAMENT_MATCH_INFO_URL, PREFIX_GET_TOURNAMENT_URL, PREFIX_GET_LIVE_MATCH_INFO_URL, \
@@ -47,7 +48,10 @@ def get_player_stats(players):
 
     url = url[:-1]
     r = requests.get(url, headers=HEADER_AUTH)
-    return r.json()
+    try:
+        return r.json()
+    except requests.exceptions.JSONDecodeError as ex:
+        return None
 
 
 # endregion

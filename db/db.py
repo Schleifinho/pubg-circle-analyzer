@@ -2,10 +2,12 @@
 from peewee import Model, MySQLDatabase, CharField, BooleanField, IntegerField, ForeignKeyField, \
     DateTimeField, FloatField
 
+from config.db_config import DATABASE, HOST, PASSWORD, USER
+
 # endregion
 
 # region Create DB
-mysqlDB = MySQLDatabase(database='pubg', user='root', password='root', host='localhost')
+mysqlDB = MySQLDatabase(database=DATABASE, user=USER, password=PASSWORD, host=HOST)
 
 
 # endregion

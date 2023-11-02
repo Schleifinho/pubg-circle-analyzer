@@ -128,7 +128,8 @@ def create_histogram(circles, map_name_tuple, server, date):
     res = add_legend_to_image(res, len(circles), date)
 
     percentage = str(THRESHOLD_RANGE).replace(".", "_")
-    folder_and_name = f"{HISTOGRAMS_FOLDER}/{server}/{map_name_pretty}/{map_name}_{percentage}.jpg"
+    date_pretty = str(date).replace("-", "_")
+    folder_and_name = f"{HISTOGRAMS_FOLDER}/{server}/{map_name_pretty}/{map_name}_{percentage}_{date_pretty}.jpg"
     cv2.imwrite(f"{folder_and_name}", res * 255)
 
 

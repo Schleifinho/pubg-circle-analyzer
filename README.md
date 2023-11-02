@@ -10,6 +10,7 @@ The PUBG Circle Analyzer Tool is a versatile command-line utility designed to he
 - [Options](#options)
 - [Example Use Cases](#example-use-cases)
 - [Adding Your PUBG API Code](#adding-your-pubg-api-code)
+- [Database Configuration and Usage](#database-configuration-and-usage)
 - [Customizing Configuration Settings](#customizing-configuration-settings)
 - [License](#license)
 
@@ -125,9 +126,17 @@ To use the PUBG Circle Analyzer Tool effectively, you need to add your PUBG API 
    ```python
    API_KEY = "your_api_key_here"
 
+## Database Configuration and Usage
+
+The PUBG Circle Analyzer Tool utilizes a MySQL database to store match data and other essential information. This chapter provides an overview of the database setup, including how to configure your MySQL database using `db_config.py`, and how the tool interacts with the database via the Peewee ORM.
+
+### Setting Up the Database Configuration
+
+The database configuration is managed through the `db_config.py` file located in the `config` folder. This file allows you to specify the connection details for your MySQL database, such as the host, username, password, and database name. Ensure that you have a MySQL server running and accessible before configuring this file.
+
 ## Customizing Configuration Settings
 
-The PUBG Circle Analyzer Tool allows you to customize various configuration settings to tailor its behavior to your specific needs. You can adjust these settings in the `config.py` and `histogram.py` files. Here are the key configurations you can modify:
+The PUBG Circle Analyzer Tool allows you to customize various configuration settings to tailor its behavior to your specific needs. You can adjust these settings in the `config.py` and `histogram.py` files (`config` folder). Here are the key configurations you can modify:
 
 ### `config.py`
 
@@ -138,6 +147,13 @@ The PUBG Circle Analyzer Tool allows you to customize various configuration sett
 ### `histogram_config.py`
 
 - **`THRESHOLD_RANGE`:**  It controls the threshold for land ratio calculations. By default, it is set to `0.75`, meaning that a position was not in the next circle 3 out of 4 times.
+
+### `db_config.py`
+
+- **`DATABASE`:**   Specifies the name of the MySQL database.
+- **`USER`:**  Specifies the username for the MySQL database.
+- **`PASSWORD`:**   Specifies the password associated with the username. 
+- **`HOST`:**   Specifies the host or the server where the MySQL database is running.
 
 After making any changes to these configuration settings, make sure to save the files. Your customizations will take effect the next time you run the tool. These customizations give you the flexibility to adapt the tool to your specific analysis requirements and computing resources.
 

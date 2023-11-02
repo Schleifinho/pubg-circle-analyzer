@@ -76,6 +76,8 @@ def extract_matches_and_circles_for_live_server(player_names):
         match_ids_with_telemetry_data = extract_circles_for_players([player])
         if match_ids_with_telemetry_data is not None and len(match_ids_with_telemetry_data) > 0:
             extract_circles_for_live_server(match_ids_with_telemetry_data)
+        elif len(match_ids_with_telemetry_data) == 0:
+            logger.debug(f"{player} either has no valid matches or all matches are already stored in the database!")
         else:
             logger.warning(f"Player: {player} does not exist!")
 
@@ -83,8 +85,11 @@ def extract_matches_and_circles_for_live_server(player_names):
 def extract_circles_for_players(players):
     time.sleep(7)
     response = get_player_stats(players)
+
+    if response is None:
+        return None
+
     if 'errors' in response:
-        logger.error(response['errors'])
         return None
 
     if response['data'] is None:
