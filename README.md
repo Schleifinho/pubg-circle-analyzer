@@ -1,4 +1,4 @@
-# PUBG Circle Analyzer Tool
+# PUBG Circle Analyzer
 
 The PUBG Circle Analyzer Tool is a versatile command-line utility designed to help you analyze and visualize PUBG (PlayerUnknown's Battlegrounds) end-circle heatmaps, land ratios, and predict future zones. Whether you're a PUBG player looking to enhance your strategic planning or a tournament organizer seeking valuable insights, this tool provides the functionality you need.
 
