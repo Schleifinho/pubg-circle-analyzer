@@ -93,7 +93,7 @@ def load_heatmaps(args):
         maps = [entry for entry in MAPS if entry[1].lower() in args.maps]
     else:
         maps = MAPS
-    create_heat_maps(args.server, maps, args.date)
+    create_heat_maps(args.server, maps, args.date, args.due_date, args.zone)
 
 
 def load_predict(args):
@@ -113,7 +113,7 @@ def load_histogram(args):
     else:
         maps = MAPS
 
-    start_generating_histogram(args.server, maps, args.date, args.zone)
+    start_generating_histogram(args.server, maps, args.date, args.due_date, args.zone)
 
 
 def main():

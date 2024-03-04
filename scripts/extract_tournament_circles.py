@@ -41,6 +41,10 @@ def split_list_into_n_parts(lst, n):
 
 
 def get_url_match_id_from_match_response(match_info_response, match_id):
+    if match_info_response is None:
+        logger.warning(f"Match bugged: {match_id}!")
+        return None, None, None
+
     if 'errors' in match_info_response:
         logger.warning(f"Match bugged: {match_id}!")
         return None, None, None
@@ -73,9 +77,12 @@ def start_extracting_live_circles(player_list):
 
 def extract_matches_and_circles_for_live_server(player_names):
     for player in tqdm(player_names, desc=f"Extracting Circles Matchers for Players...", colour="green"):
+        logger.info(f"Downloading matches for{player}")
         match_ids_with_telemetry_data = extract_circles_for_players([player])
         if match_ids_with_telemetry_data is not None and len(match_ids_with_telemetry_data) > 0:
             extract_circles_for_live_server(match_ids_with_telemetry_data)
+        elif match_ids_with_telemetry_data is None:
+            logger.debug(f"{player} either has no valid matches!")
         elif len(match_ids_with_telemetry_data) == 0:
             logger.debug(f"{player} either has no valid matches or all matches are already stored in the database!")
         else:
@@ -179,6 +186,9 @@ def retrieve_matches_and_push_to_db_live(match_ids_to_fetch):
                 continue
 
         match_info_response = get_match_info(match_id)
+        if match_info_response is None:
+            continue
+
         url, match_data, match_data_attributes = get_url_match_id_from_match_response(match_info_response, match_id)
 
         if url is None:

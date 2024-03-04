@@ -89,7 +89,7 @@ Here are some examples:
    
    python3 ./main.py -e -server live -pl playername1 playername2 ... 
    
-3. **Generate HeatmapsYou can use the `-c` option to generate heatmaps that visualize the distribution of end-circle data. Heatmaps provide valuable insights into where matches tend to conclude on a specific PUBG map. Below are examples of generating heatmaps:
+3. **Generate Heatmaps :** You can use the `-c` option to generate heatmaps that visualize the distribution of end-circle data. Heatmaps provide valuable insights into where matches tend to conclude on a specific PUBG map. Below are examples of generating heatmaps:
 To generate heatmaps for a single PUBG map, specify the map using the `-maps` option. For example, if you want to create a heatmap for the "Erangel" map, use the following command:
    ```shell
    python3 ./main.py -c -server both -maps erangel

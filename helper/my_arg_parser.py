@@ -1,7 +1,7 @@
 # region Imports
 import argparse
 
-from config.config import GREEN, DATE_DEFAULT, RESET
+from config.config import GREEN, DATE_DEFAULT, RESET, DUE_DATE_DEFAULT
 from helper.my_logger import logger
 
 
@@ -99,6 +99,14 @@ def create_parser():
              f"FORMAT: dd-mm-yyyy\n"
              f"Not setting this flag uses the DEFAULT Date from the config",
         default=DATE_DEFAULT
+    )
+
+    parser.add_argument(
+        "-due_date",
+        type=str,
+        help=f"{GREEN}Data until this Date will be used{RESET}\n"
+             f"FORMAT: dd-mm-yyyy\n",
+        default=DUE_DATE_DEFAULT
     )
 
     parser.add_argument(

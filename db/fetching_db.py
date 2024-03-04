@@ -9,14 +9,16 @@ from db.db import TournamentMatchData, LiveServerMatchData, TelemetryLogGameStat
 # region Fetching
 
 
-def fetch_event_server_matches(_map, date):
-    return TournamentMatchData.select().where(TournamentMatchData.mapName == _map) \
-        .where(TournamentMatchData.createdAt > date)
+def fetch_event_server_matches(_map, date, due_date):
+    return (TournamentMatchData.select().where(TournamentMatchData.mapName == _map)
+                                        .where(date <= TournamentMatchData.createdAt <= due_date)
+                                        .where(TournamentMatchData.createdAt <= date))
 
 
-def fetch_live_server_matches(_map, date):
-    return LiveServerMatchData.select().where(LiveServerMatchData.mapName == _map).where(
-        LiveServerMatchData.createdAt > date)
+def fetch_live_server_matches(_map, date, due_date):
+    return (LiveServerMatchData.select().where(LiveServerMatchData.mapName == _map)
+                                        .where(date <= LiveServerMatchData.createdAt)
+                                        .where(LiveServerMatchData.createdAt <= due_date))
 
 
 def fetch_telemetry_data(server, matches_esport_live, zone, or_greater=False, or_less=False):
@@ -172,14 +174,14 @@ def fetch_tournaments_by_ids_list(tournament_ids):
     return Tournaments.select().where(Tournaments.id.in_(tournament_ids))
 
 
-def fetch_matches(server, _map, date):
+def fetch_matches(server, _map, date, due_date):
     if server == "live":
-        return None, fetch_live_server_matches(_map, date)
+        return None, fetch_live_server_matches(_map, date, due_date)
     elif server == "esport":
-        return fetch_event_server_matches(_map, date), None
+        return fetch_event_server_matches(_map, date, due_date), None
     else:
-        match_data_live = fetch_live_server_matches(_map, date)
-        match_data_esport = fetch_event_server_matches(_map, date)
+        match_data_live = fetch_live_server_matches(_map, date, due_date)
+        match_data_esport = fetch_event_server_matches(_map, date, due_date)
         return match_data_esport, match_data_live
 
 

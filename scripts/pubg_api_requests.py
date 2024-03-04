@@ -38,7 +38,10 @@ def get_tournament_match_info(match_id):
 def get_match_info(match_id):
     url = PREFIX_GET_LIVE_MATCH_INFO_URL + match_id
     r = requests.get(url, headers=HEADER_NO_AUTH)
-    return r.json()
+    if r.ok and r.status_code == 200:
+        return r.json()
+
+    return None
 
 
 def get_player_stats(players):
