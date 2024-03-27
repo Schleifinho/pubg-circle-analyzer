@@ -126,6 +126,15 @@ def create_parser():
                         choices=["SVC", "KNN"],
                         default="KNN")
 
+    parser.add_argument(
+        "-match_type",
+        type=str,
+        help=f"{GREEN}Data until this Date will be used{RESET}\n"
+             f"super: custom + ranked\n",
+        choices=["normal", "ranked", "custom", "super", "all"],
+        default="all"
+    )
+
     # Parse the command-line arguments
     args = parser.parse_args()
 
