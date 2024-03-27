@@ -47,8 +47,8 @@ def add_color_map_to_bg(res, width, line_num, line_width_padding, line_height_pa
     return res
 
 
-def add_legend_to_image(res, circles_len, date, due_date):
-    lines = [LegendLine(f"Number Of Maps: {circles_len}"),
+def add_legend_to_image(res, circles_len, date, due_date, match_type):
+    lines = [LegendLine(f"Number Of Maps: {circles_len} ({match_type})", scale=.9),
              LegendLine(f"From: {date}"),
              LegendLine(f"To: {due_date}"),
              LegendLine("Not In Zone 4 Percentage"),
@@ -71,7 +71,7 @@ def add_legend_to_image(res, circles_len, date, due_date):
     return res
 
 
-def create_histogram(circles, map_name_tuple, server, date, due_date):
+def create_histogram(circles, map_name_tuple, server, date, due_date, match_type):
     map_name = map_name_tuple[0].lower()
     map_name_pretty = map_name_tuple[1].lower()
     histogram_zone_3 = np.zeros((WINDOW_SIZE, WINDOW_SIZE), dtype=np.uint32)
@@ -124,22 +124,22 @@ def create_histogram(circles, map_name_tuple, server, date, due_date):
     bg = cv2.cvtColor(bg, cv2.COLOR_RGBA2RGB)
 
     res = cv2.addWeighted(colormap, 0.5, bg, 1, 0)
-    res = add_legend_to_image(res, len(circles), date, due_date)
+    res = add_legend_to_image(res, len(circles), date, due_date, match_type)
 
     percentage = str(THRESHOLD_RANGE).replace(".", "_")
     date_pretty = str(date).replace("-", "_")
     due_date_pretty = str(due_date).replace("-", "_")
-    folder_and_name = f"{HISTOGRAMS_FOLDER}/{server}/{map_name_pretty}/{map_name}_{percentage}_{date_pretty}_{due_date_pretty}.jpg"
+    folder_and_name = f"{HISTOGRAMS_FOLDER}/{server}/{map_name_pretty}/{map_name}_{percentage}_{date_pretty}_{due_date_pretty}_{match_type}.jpg"
     cv2.imwrite(f"{folder_and_name}", res * 255)
 
 
-def start_generating_histogram(server, maps, date_string, due_date_string, zone):
+def start_generating_histogram(server, maps, date_string, due_date_string, zone, match_type):
     date = datetime.strptime(date_string, DATE_FORMAT)
     due_date = datetime.strptime(due_date_string, DATE_FORMAT)
 
     for map_i in tqdm(maps, desc="Generating Histogram for Map...", colour="green"):
         logger.debug(f"\nGenerating {map_i[1]}")
-        matches_esport_live = fetch_matches(server, map_i[0], date, due_date)
+        matches_esport_live = fetch_matches(server, map_i[0], date, due_date, match_type)
 
         phases = [zone - 1, zone]
         zone_start_and_predict = fetch_telemetry_data_poison_zone_per_phase(server, matches_esport_live, phases)
@@ -169,4 +169,4 @@ def start_generating_histogram(server, maps, date_string, due_date_string, zone)
             except Exception as e:
                 logger.debug(e)
 
-        create_histogram(zone_3_and_4, map_i, server, date_string, due_date_string)
+        create_histogram(zone_3_and_4, map_i, server, date_string, due_date_string, match_type)

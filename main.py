@@ -93,13 +93,13 @@ def load_heatmaps(args):
         maps = [entry for entry in MAPS if entry[1].lower() in args.maps]
     else:
         maps = MAPS
-    create_heat_maps(args.server, maps, args.date, args.due_date, args.zone)
+    create_heat_maps(args.server, maps, args.date, args.due_date, args.zone, args.match_type)
 
 
 def load_predict(args):
     use_map = [entry for entry in MAPS if entry[1].lower() in args.maps][0]
     logger.info(f"Predict Map: {use_map}")
-    start_predicting_circles(args.server, use_map, args.zone, args.date, args.mode)
+    start_predicting_circles(args.server, use_map, args.zone, args.date, args.mode, args.match_type)
 
 
 # endregion
@@ -113,7 +113,7 @@ def load_histogram(args):
     else:
         maps = MAPS
 
-    start_generating_histogram(args.server, maps, args.date, args.due_date, args.zone)
+    start_generating_histogram(args.server, maps, args.date, args.due_date, args.zone, args.match_type)
 
 
 def main():

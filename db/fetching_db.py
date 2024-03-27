@@ -15,10 +15,12 @@ def fetch_event_server_matches(_map, date, due_date):
                                         .where(TournamentMatchData.createdAt <= date))
 
 
-def fetch_live_server_matches(_map, date, due_date):
+def fetch_live_server_matches(_map, date, due_date, match_types):
+
     return (LiveServerMatchData.select().where(LiveServerMatchData.mapName == _map)
                                         .where(date <= LiveServerMatchData.createdAt)
-                                        .where(LiveServerMatchData.createdAt <= due_date))
+                                        .where(LiveServerMatchData.createdAt <= due_date)
+                                        .where(LiveServerMatchData.matchType << match_types))
 
 
 def fetch_telemetry_data(server, matches_esport_live, zone, or_greater=False, or_less=False):
@@ -174,13 +176,37 @@ def fetch_tournaments_by_ids_list(tournament_ids):
     return Tournaments.select().where(Tournaments.id.in_(tournament_ids))
 
 
-def fetch_matches(server, _map, date, due_date):
+def get_match_types(match_type):
+    match_types = []
+    normal = "official"
+    custom = "custom"
+    ranked = "competitive"
+
+    if match_type == "all":
+        match_types.append(normal)
+        match_types.append(custom)
+        match_types.append(ranked)
+    elif match_type == "normal":
+        match_types.append(normal)
+    elif match_type == "ranked":
+        match_types.append(ranked)
+    elif match_type == "custom":
+        match_types.append(ranked)
+    elif match_type == "super":
+        match_types.append(custom)
+        match_types.append(ranked)
+    return match_types
+
+
+def fetch_matches(server, _map, date, due_date, match_type="all"):
+    match_types = get_match_types(match_type)
+
     if server == "live":
-        return None, fetch_live_server_matches(_map, date, due_date)
+        return None, fetch_live_server_matches(_map, date, due_date, match_types)
     elif server == "esport":
         return fetch_event_server_matches(_map, date, due_date), None
     else:
-        match_data_live = fetch_live_server_matches(_map, date, due_date)
+        match_data_live = fetch_live_server_matches(_map, date, due_date, match_types)
         match_data_esport = fetch_event_server_matches(_map, date, due_date)
         return match_data_esport, match_data_live
 

@@ -173,9 +173,9 @@ def open_predict_window(map_name, svc_x, svc_y, predicted_circle_radius):
         start_predict_loop(background_image, svc_x, svc_y, window_name, predicted_circle_radius)
 
 
-def start_predicting_circles(server, use_map, zone, date_string, mode):
+def start_predicting_circles(server, use_map, zone, date_string, mode, match_type):
     date = datetime.strptime(date_string, DATE_FORMAT)
-    matches_esport_live = fetch_matches(server, use_map[0], date)
+    matches_esport_live = fetch_matches(server, use_map[0], date, match_type)
     map_pretty = use_map[0].lower()
 
     if zone == 4:
