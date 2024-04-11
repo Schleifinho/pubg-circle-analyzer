@@ -191,14 +191,14 @@ def get_match_types(match_type):
     elif match_type == "ranked":
         match_types.append(ranked)
     elif match_type == "custom":
-        match_types.append(ranked)
+        match_types.append(custom)
     elif match_type == "super":
         match_types.append(custom)
         match_types.append(ranked)
     return match_types
 
 
-def fetch_matches(server, _map, date, due_date, match_type="all"):
+def fetch_matches(server, _map, date, due_date, match_type):
     match_types = get_match_types(match_type)
 
     if server == "live":

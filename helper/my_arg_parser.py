@@ -132,7 +132,7 @@ def create_parser():
         help=f"{GREEN}Data until this Date will be used{RESET}\n"
              f"super: custom + ranked\n",
         choices=["normal", "ranked", "custom", "super", "all"],
-        default="all"
+        default="super"
     )
 
     # Parse the command-line arguments
