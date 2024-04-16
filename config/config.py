@@ -6,6 +6,12 @@ import logging
 # region General
 NUM_OF_THREADS = 8
 
+# Unlimited -> DOWNLOAD_SPEED_MULTIPLIER = 0
+# currently 1mb/sec
+DOWNLOAD_SPEED_MULTIPLIER = 1024
+# multiply by 1024 to get kb/sec instead of b/sec
+DOWNLOAD_SPEED = DOWNLOAD_SPEED_MULTIPLIER * 1024
+
 GREEN = "\033[92m"
 RESET = "\033[0m"
 LOGGING_LEVEL = logging.INFO
