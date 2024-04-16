@@ -23,8 +23,8 @@ HISTOGRAMS_FOLDER = f"{RESULTS_FOLDER}/histograms"
 ASSETS_FOLDER = "./assets"
 
 # should be same index in pretty
-maps = ["Kiki_Main", "DihorOtok_Main", "Desert_Main", "Baltic_Main", "Tiger_Main"]
-maps_pretty = ["Deston", "Vikendi", "Miramar", "Erangel", "Taego"]
+maps = ["Kiki_Main", "DihorOtok_Main", "Desert_Main", "Baltic_Main", "Tiger_Main", "Neon_Main"]
+maps_pretty = ["Deston", "Vikendi", "Miramar", "Erangel", "Taego", "Rondo"]
 
 MAPS = list(zip(maps, maps_pretty))
 # endregion

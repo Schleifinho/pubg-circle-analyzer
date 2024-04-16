@@ -88,8 +88,8 @@ def create_parser():
         type=str,  # Specifies the type of the elements in the list
         help=f"{GREEN}List of Maps{RESET}\n"
              "Choose one or more Maps. Not setting this flag will use all maps!",
-        choices=["vikendi", "miramar", "erangel", "deston", "taego"],
-        default=["vikendi", "miramar", "erangel", "deston", "taego"]
+        choices=["vikendi", "miramar", "erangel", "deston", "taego", "rondo"],
+        default=["vikendi", "miramar", "erangel", "deston", "taego", "rondo"]
     )
 
     parser.add_argument(
