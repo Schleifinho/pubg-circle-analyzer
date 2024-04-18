@@ -4,6 +4,7 @@ import os
 from config.config import MAPS, RESULTS_FOLDER, HISTOGRAMS_FOLDER, HEATMAPS_FOLDER
 from db.db import Tournaments, TournamentMatchData, \
     LiveServerMatchData, TelemetryLogGameStatePeriodicEventServer, TelemetryLogGameStatePeriodicLiveServer, mysqlDB
+from scripts.extract_player_names import extract_player_names
 from scripts.extract_tournament_circles import get_tournaments_and_push_to_db, get_scrims_and_push_to_db, \
     start_extracting_esport_circles, start_extracting_live_circles
 from scripts.generate_heat_map import create_heat_maps
@@ -78,7 +79,7 @@ def load_extract(args):
         start_extracting_esport_circles(args.tournament_ids, args.date)
     elif args.server == "live":
         logger.debug("Extracting for Live Server...")
-        start_extracting_live_circles(args.player_list)
+        start_extracting_live_circles(args.player_list, args.player_list_file)
     elif args.server == "both":
         logger.debug("Extracting for Both Servers...")
         start_extracting_esport_circles(args.tournament_ids, args.date)
@@ -105,6 +106,9 @@ def load_predict(args):
 # endregion
 
 # region Main
+def load_extract_players(args):
+    extract_player_names(args.player_list, args.player_list_file)
+
 
 def load_histogram(args):
     create_histograms_folder()
@@ -138,6 +142,9 @@ def main():
     elif args.histogram:
         logger.info("Create Histogram")
         load_histogram(args)
+    elif args.extract_players:
+        logger.info("Extract Players")
+        load_extract_players(args)
 
     mysqlDB.close()
 

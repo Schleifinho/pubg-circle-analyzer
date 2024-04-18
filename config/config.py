@@ -12,6 +12,8 @@ DOWNLOAD_SPEED_MULTIPLIER = 1024
 # multiply by 1024 to get kb/sec instead of b/sec
 DOWNLOAD_SPEED = DOWNLOAD_SPEED_MULTIPLIER * 1024
 
+DEFAULT_PLAYER_LIST_FILE = "playerlist.txt"
+
 GREEN = "\033[92m"
 RESET = "\033[0m"
 LOGGING_LEVEL = logging.INFO

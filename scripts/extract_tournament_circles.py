@@ -1,4 +1,5 @@
 # region Imports
+import os
 import threading
 from datetime import datetime
 import validators
@@ -71,13 +72,24 @@ def get_url_match_id_from_match_response(match_info_response, match_id):
 # endregion
 
 # region Extract Live Server Data
-def start_extracting_live_circles(player_list):
+def start_extracting_live_circles(player_list, player_list_file):
+    player_list = [] if player_list is None else player_list
+
+    if os.path.exists(player_list_file):
+        with open(player_list_file, 'r') as file:
+            # Read the content of the file
+            content = file.read()
+
+            # Split the content into words based on commas, spaces, or newlines
+            words = [word.strip() for word in content.replace(',', ' ').split()]
+            player_list += words
+
     extract_matches_and_circles_for_live_server(player_list)
 
 
 def extract_matches_and_circles_for_live_server(player_names):
     for player in tqdm(player_names, desc=f"Extracting Circles Matchers for Players...", colour="green"):
-        logger.info(f"Downloading matches for{player}")
+        logger.info(f"Downloading matches for: {player}")
         match_ids_with_telemetry_data = extract_circles_for_players([player])
         if match_ids_with_telemetry_data is not None and len(match_ids_with_telemetry_data) > 0:
             extract_circles_for_live_server(match_ids_with_telemetry_data)

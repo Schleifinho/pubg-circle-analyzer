@@ -1,7 +1,7 @@
 # region Imports
 import argparse
 
-from config.config import GREEN, DATE_DEFAULT, RESET, DUE_DATE_DEFAULT
+from config.config import GREEN, DATE_DEFAULT, RESET, DUE_DATE_DEFAULT, DEFAULT_PLAYER_LIST_FILE
 from helper.my_logger import logger
 
 
@@ -48,12 +48,24 @@ def create_parser():
                                           help=f"{GREEN}Create Histogram{RESET}\n"
                                                f"Create Histogram For Zone 4 (default) or 8")
 
+    # Download Player List
+    mutually_exclusive_group.add_argument("-ep", "--extract_players",
+                                          action="store_true",
+                                          help=f"{GREEN}Extract Player List{RESET}\n")
+
     parser.add_argument(
         "-pl", "--player_list",
         nargs='+',  # Indicates that the flag accepts multiple arguments
         type=str,  # Specifies the type of the elements in the list
         help=f"{GREEN}List of Players to extract data from{RESET}\n"
              "This flag is REQUIRED for extracting live server data!"
+    )
+
+    parser.add_argument(
+        "-pl_file", "--player_list_file",
+        type=str,  # Specifies the type of the elements in the list
+        help=f"{GREEN}Provide a txt file of player names separator = [',', ' ', '\n']{RESET}\n",
+        default=DEFAULT_PLAYER_LIST_FILE
     )
 
     parser.add_argument(
@@ -138,14 +150,19 @@ def create_parser():
     # Parse the command-line arguments
     args = parser.parse_args()
 
-    if args.extract and (args.server == "both" or args.server == "live") and not args.player_list:
-        logger.error("Set '-pl' or '--playerlist' Flag If Extracting Matches From Live Servers!")
+    if args.extract and (args.server == "both" or args.server == "live") and not (
+            args.player_list or args.player_list_file):
+        logger.error("Set '-pl' or '--player_list' Flag If Extracting Matches From Live Servers!")
+        logger.error("Alternative: Set '-pl_file' or '--player_list_file' To Provide A .txt File!")
         parser.exit()
 
     if args.predict and len(args.maps) != 1:
         logger.error("'-maps' Flag Issue: Specify Exactly One Map!")
         parser.exit()
 
+    if args.extract_players and not args.player_list:
+        logger.error("Provide a url via '-pl'")
+        parser.exit()
 
     return args
 # endregion
