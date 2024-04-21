@@ -102,7 +102,7 @@ def extract_matches_and_circles_for_live_server(player_names):
 
 
 def extract_circles_for_players(players):
-    time.sleep(7)
+    #time.sleep(7)
     response = get_player_stats(players)
 
     if response is None:
@@ -247,7 +247,7 @@ def start_extracting_esport_circles(tournament_ids, date_string):
 def extract_matches_for_tournaments(tournaments_ids):
     total_list_of_matches_and_telemetry_urls = list()
     for tournament_id in tqdm(tournaments_ids, desc="Extracting Matches...", colour="green"):
-        time.sleep(7)
+        #time.sleep(7)
         already_fetched_matches = fetch_tournament_matches_by_tournament_id(tournament_id)
 
         matches_response = get_tournament_matches(tournament_id)
@@ -393,6 +393,6 @@ def get_scrims_and_push_to_db(date_string):
                 match_id_and_telemetry_urls = retrieve_matches_and_push_to_db_event(match_ids, scrim_tourney)
                 total_list_of_matches_and_telemetry_urls += match_id_and_telemetry_urls
 
-        time.sleep(7)
+        #time.sleep(7)
     extract_circles_for_event_server(total_list_of_matches_and_telemetry_urls)
 # endregion
