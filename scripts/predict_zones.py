@@ -6,7 +6,8 @@ import pandas as pd
 from sklearn import svm
 import matplotlib.pylab as plt
 from sklearn.neighbors import KNeighborsRegressor
-from config.config import DATE_FORMAT, ASSETS_FOLDER, WINDOW_SIZE, CIRCLE_3_SIZE, CIRCLE_4_SIZE, CIRCLE_8_SIZE
+from config.config import DATE_FORMAT, ASSETS_FOLDER, WINDOW_SIZE, CIRCLE_3_SIZE, CIRCLE_4_SIZE, CIRCLE_8_SIZE, \
+    KNN_NEIGHBORS
 from db.fetching_db import fetch_matches, fetch_telemetry_data_poison_zone_per_phase
 from helper.my_logger import logger
 from helper.pubg_helper_functions import pubg_unit_to_pixel, pixel_to_pubg_unit
@@ -50,6 +51,9 @@ def train_svm(end_circles):
 
 
 def train_knn(end_circles):
+    if KNN_NEIGHBORS > len(end_circles):
+        logger.error(f"")
+
     logger.info(f"Training Model...")
     df = pd.DataFrame(columns=['x_before_zone', 'y_before_zone', 'x_predict_zone', 'y_predict_zone'], data=end_circles)
 
@@ -58,8 +62,8 @@ def train_knn(end_circles):
     predict_y = df['y_predict_zone'].values
 
     # Create and fit a KNN regressor
-    knn_regressor_x = KNeighborsRegressor(n_neighbors=5)  # You can adjust the number of neighbors
-    knn_regressor_y = KNeighborsRegressor(n_neighbors=5)  # You can adjust the number of neighbors
+    knn_regressor_x = KNeighborsRegressor(n_neighbors=KNN_NEIGHBORS)  # You can adjust the number of neighbors
+    knn_regressor_y = KNeighborsRegressor(n_neighbors=KNN_NEIGHBORS)  # You can adjust the number of neighbors
     knn_regressor_x.fit(train_data, predict_x)
     knn_regressor_y.fit(train_data, predict_y)
 
@@ -177,6 +181,7 @@ def start_predicting_circles(server, use_map, zone, date_string, due_date_string
     date = datetime.strptime(date_string, DATE_FORMAT)
     date_due = datetime.strptime(due_date_string, DATE_FORMAT)
     matches_esport_live = fetch_matches(server, use_map[0], date, date_due, match_type)
+
     map_pretty = use_map[0].lower()
 
     if zone == 4:
@@ -212,11 +217,23 @@ def start_predicting_circles(server, use_map, zone, date_string, due_date_string
         except Exception as e:
             print(e)
 
-    logger.info(f"# Matches: {len(zone_start_and_predict_filtered)}")
+    zone_start_and_predict_filtered = []
+    number_of_matches = len(zone_start_and_predict_filtered)
+
+    if number_of_matches == 0:
+        logger.error(f"{use_map[1]}: No Matches!")
+        return
+
+    logger.info(f"# Matches: #{number_of_matches}")
+    if number_of_matches < 1000:
+        logger.warning(f"Prediction Is Weak. Add More Matches To Get Better Results!")
 
     if mode == "SVC":
         svc_x, svc_y = train_svm(zone_start_and_predict_filtered)
     elif mode == "KNN":
+        if KNN_NEIGHBORS > number_of_matches:
+            logger.error(f"{use_map[1]}: Number Of KNN Neighbors <= Number Of Matches!")
+            return
         svc_x, svc_y = train_knn(zone_start_and_predict_filtered)
     else:
         logger.error("Please use a valid prediction mode")

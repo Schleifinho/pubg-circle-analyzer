@@ -39,6 +39,7 @@ MAPS = list(zip(maps, maps_pretty))
 
 # region Predict
 WINDOW_SIZE = 1080
+KNN_NEIGHBORS = 5
 
 # DO NOT TOUCH
 PUBG_MAP_SIZE = 816000
