@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 from tqdm import tqdm
-from config.config import DATE_FORMAT, CIRCLE_4_SIZE, WINDOW_SIZE, ASSETS_FOLDER, CIRCLE_3_SIZE, HISTOGRAMS_FOLDER
+from config.config import DATE_FORMAT, CIRCLE_4_SIZE, ASSETS_FOLDER, CIRCLE_3_SIZE, HISTOGRAMS_FOLDER, WINDOW_SIZE
 from config.histogram_config import THRESHOLD_RANGE, COLOR_WHITE, COLOR_BLACK
 from db.fetching_db import fetch_matches, fetch_telemetry_data_poison_zone_per_phase
 from helper.legend_line import LegendLine
