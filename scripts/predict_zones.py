@@ -6,8 +6,8 @@ import pandas as pd
 from sklearn import svm
 import matplotlib.pylab as plt
 from sklearn.neighbors import KNeighborsRegressor
-from config.config import DATE_FORMAT, ASSETS_FOLDER, WINDOW_SIZE, CIRCLE_3_SIZE, CIRCLE_4_SIZE, CIRCLE_8_SIZE, \
-    KNN_NEIGHBORS
+from config.config import WINDOW_SIZE, DATE_FORMAT, ASSETS_FOLDER, CIRCLE_3_SIZE, CIRCLE_4_SIZE, CIRCLE_8_SIZE
+from config.predict_config import KNN_NEIGHBORS
 from db.fetching_db import fetch_matches, fetch_telemetry_data_poison_zone_per_phase
 from helper.my_logger import logger
 from helper.pubg_helper_functions import pubg_unit_to_pixel, pixel_to_pubg_unit
@@ -28,8 +28,6 @@ def get_mouse_position(event, x, y, flags, param):
         mouse_x, mouse_y = x, y
     elif event == cv2.EVENT_LBUTTONDOWN:
         mouse_x_candidate, mouse_y_candidate = x, y
-
-
 
 
 def train_svm(end_circles):

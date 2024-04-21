@@ -5,6 +5,7 @@ import logging
 
 # region General
 NUM_OF_THREADS = 8
+WINDOW_SIZE = 1080
 
 # Unlimited -> DOWNLOAD_SPEED_MULTIPLIER = 0
 # currently 1mb/sec
@@ -37,13 +38,8 @@ maps_pretty = ["Deston", "Vikendi", "Miramar", "Erangel", "Taego", "Rondo"]
 MAPS = list(zip(maps, maps_pretty))
 # endregion
 
-# region Predict
-WINDOW_SIZE = 1080
-KNN_NEIGHBORS = 5
-
 # DO NOT TOUCH
 PUBG_MAP_SIZE = 816000
 CIRCLE_3_SIZE = 67000
 CIRCLE_4_SIZE = 40000
 CIRCLE_8_SIZE = 7700
-# endregion
