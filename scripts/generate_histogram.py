@@ -168,5 +168,6 @@ def start_generating_histogram(server, maps, date_string, due_date_string, zone,
                      "x_zone_4": int(float(x_after_zone)), "y_zone_4": int(float(y_after_zone))})
             except Exception as e:
                 logger.debug(e)
-
-        create_histogram(zone_3_and_4, map_i, server, date_string, due_date_string, match_type)
+        # Don't create hist if less than 5 circles        
+        if len(zone_3_and_4) > 5:
+            create_histogram(zone_3_and_4, map_i, server, date_string, due_date_string, match_type)

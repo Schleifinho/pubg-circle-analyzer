@@ -8,15 +8,19 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from config.pubg_api_config import HEADER_NO_AUTH
+from helper.my_logger import logger
 
 
 def extract_player_names(urls, output_file):
     options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
+    options.add_argument('--disable-web-security')
+    #options.add_argument('--user-data-dir=/tmp/chrome_dev_test')
     driver = webdriver.Chrome(options=options)
-
+    logger.info(urls)
     for url in urls:
+        logger.info(url)
         driver.get(url)
+
 
         # wait until table is loaded
         WebDriverWait(driver, 10).until(

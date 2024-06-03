@@ -255,6 +255,9 @@ def extract_matches_for_tournaments(tournaments_ids):
         if 'errors' in matches_response:
             logger.warning(f"No matches for tournament: {tournament_id}")
             continue
+
+        if 'included' not in matches_response:
+            continue
         matches = matches_response['included']
 
         match_ids_to_fetch = []

@@ -143,7 +143,7 @@ def main():
         logger.info("Create Histogram")
         load_histogram(args)
     elif args.extract_players:
-        logger.info("Extract Players")
+        logger.info("Extract Player Names")
         load_extract_players(args)
 
     mysqlDB.close()
