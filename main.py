@@ -1,12 +1,14 @@
 # region Imports
 import os
 
+from peewee import IntegrityError
+
 from config.config import MAPS, RESULTS_FOLDER, HISTOGRAMS_FOLDER, HEATMAPS_FOLDER
 from db.db import Tournaments, TournamentMatchData, \
     LiveServerMatchData, TelemetryLogGameStatePeriodicEventServer, TelemetryLogGameStatePeriodicLiveServer, mysqlDB
 from scripts.extract_player_names import extract_player_names
 from scripts.extract_tournament_circles import get_tournaments_and_push_to_db, get_scrims_and_push_to_db, \
-    start_extracting_esport_circles, start_extracting_live_circles
+    start_extracting_esport_circles, start_extracting_live_circles, check_tournament
 from scripts.generate_heat_map import create_heat_maps
 from helper.my_arg_parser import create_parser
 from helper.my_logger import logger
@@ -64,13 +66,24 @@ def load_init():
     create_heatmaps_folder()
 
 
+
+
+
 def load_tournaments(args):
     if args.tournament_ids is None:
         get_tournaments_and_push_to_db()
         get_scrims_and_push_to_db(args.date)
     else:
-        for t_id in args.t_ids:
-            Tournaments.create(id=t_id, createdAt=args.date, type=args.t_type)
+        for t_id in args.tournament_ids:
+            date = check_tournament(t_id)
+            if date is not None:
+                try:
+                    Tournaments.create(id=t_id, createdAt=date, type=args.tournament_type)
+                    logger.info(f"Added {t_id}")
+                except IntegrityError:
+                    logger.info(f"Already in {t_id}")
+            else:
+                logger.info(f"{t_id} is not a valid tournament")
 
 
 def load_extract(args):

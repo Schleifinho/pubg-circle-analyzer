@@ -247,7 +247,6 @@ def start_extracting_esport_circles(tournament_ids, date_string):
 def extract_matches_for_tournaments(tournaments_ids):
     total_list_of_matches_and_telemetry_urls = list()
     for tournament_id in tqdm(tournaments_ids, desc="Extracting Matches...", colour="green"):
-        #time.sleep(7)
         already_fetched_matches = fetch_tournament_matches_by_tournament_id(tournament_id)
 
         matches_response = get_tournament_matches(tournament_id)
@@ -262,18 +261,17 @@ def extract_matches_for_tournaments(tournaments_ids):
 
         match_ids_to_fetch = []
         if len(matches) == len(already_fetched_matches):
-            logger.debug(f"{tournament_id}: {len(matches)} matches")
+            logger.info(f"Already added all matches for {tournament_id}| {len(matches)} matches")
             continue
         else:
             for match in matches:
                 match_id = match['id']
                 if match['id'] not in already_fetched_matches:
-
                     match_ids_to_fetch.append(match_id)
                 else:
                     logger.debug(f"already in {match_id}")
             if len(match_ids_to_fetch) > 0:
-                print(type(match_ids_to_fetch))
+                logger.info(f"Found {len(match_ids_to_fetch)} matches for {tournament_id}")
                 match_id_and_telemetry_urls = retrieve_matches_and_push_to_db_event(match_ids_to_fetch, tournament_id)
                 total_list_of_matches_and_telemetry_urls += match_id_and_telemetry_urls
 
@@ -287,7 +285,6 @@ def retrieve_matches_and_push_to_db_event(match_ids_to_fetch, tourney_ref):
             if fetch_get_or_none_telemetry_log_tournament(match_id) is not None:
                 continue
 
-        print(match_id)
         match_info_response = get_tournament_match_info(match_id)
 
         url, match_data, match_data_attributes = get_url_match_id_from_match_response(match_info_response, match_id)
@@ -370,6 +367,16 @@ def get_tournaments_and_push_to_db():
         push_tournament_list(tournaments['data'])
     else:
         logger.error("Could Not Retrieve Tournament List!")
+
+
+def check_tournament(t_id):
+    logger.info(f"Checking {t_id}")
+    matches_response = get_tournament_matches(t_id)
+    if "included" in matches_response:
+        included = matches_response['included']
+        if len(included) > 0 and included[0]['attributes'] and included[0]['attributes']['createdAt']:
+            return included[0]['attributes']['createdAt']
+    return None
 
 
 def get_scrims_and_push_to_db(date_string):
