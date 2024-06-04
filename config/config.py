@@ -19,7 +19,7 @@ GREEN = "\033[92m"
 RESET = "\033[0m"
 LOGGING_LEVEL = logging.INFO
 
-DATE_DEFAULT = "01-01-2024"
+DATE_DEFAULT = "01-03-2024"
 DUE_DATE_DEFAULT = datetime.today().strftime('%d-%m-%Y')
 DATE_FORMAT = "%d-%m-%Y"
 # endregion

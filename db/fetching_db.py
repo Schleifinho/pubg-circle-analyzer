@@ -11,8 +11,7 @@ from db.db import TournamentMatchData, LiveServerMatchData, TelemetryLogGameStat
 
 def fetch_event_server_matches(_map, date, due_date):
     return (TournamentMatchData.select().where(TournamentMatchData.mapName == _map)
-                                        .where(date <= TournamentMatchData.createdAt <= due_date)
-                                        .where(TournamentMatchData.createdAt <= date))
+                                        .where(date <= TournamentMatchData.createdAt <= due_date))
 
 
 def fetch_live_server_matches(_map, date, due_date, match_types):
