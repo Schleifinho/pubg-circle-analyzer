@@ -38,17 +38,26 @@ Detailed usage instructions are available in the command-line help (use `main.py
 
 ## Getting Started
 
-1. **Installation:** Clone this repository and ensure you have Python installed on your system.
+1. **Installation:** Clone this repository and ensure you have `python 3.9` installed on your system. The missing packages can be installed with `pip install [package]` most of the time. If not google is your friend!
 
-2. **Setup:** Run `main.py -i` to initialize the database and folders.
+2. **Assets:** Download and copy the map files from https://github.com/pubg/api-assets/tree/master/Assets/Maps to the repos assets folder
+    Name them as follows:
+    - Erangel &rarr; `baltic_main.png`
+    - Miramar &rarr; `desert_main.png`
+    - Vikendi &rarr; `dihorotok_main.png`
+    - Deston &rarr; `kiki_main.png`
+    - Rondo &rarr; `neon_main.png`
+    - Taego &rarr; `tiger_main.png`
+   
+3. **Setup:** Run `main.py -i` to initialize the database and folders.
 
-3. **Data Retrieval:** Use `main.py -t` to fetch tournament data, or `main.py -e` to extract circle data from tournament or live matches. You can specify maps and other optional parameters.
+4. **Data Retrieval:** Use `main.py -t` to fetch tournament data, or `main.py -e` to extract circle data from tournament or live matches. You can specify maps and other optional parameters.
 
-4. **Visualization:** Create heatmaps with `main.py -c` and predict circles with `main.py -p`. Adjust prediction zones and modes as needed.
+5. **Visualization:** Create heatmaps with `main.py -c` and predict circles with `main.py -p`. Adjust prediction zones and modes as needed.
 
-5. **Analysis:** Generate histograms with `main.py -hist` to analyze circle distribution.
+6. **Analysis:** Generate histograms with `main.py -hist` to analyze circle distribution.
 
-6. **Player List:** To focus add matches from specific players, provide a list of player IDs with the `-pl` option.
+7. **Player List:** To focus add matches from specific players, provide a list of player IDs with the `-pl` option.
 
 ## Options
 
