@@ -6,6 +6,7 @@ The PUBG Circle Analyzer Tool is a versatile command-line utility designed to he
 ## Table of Contents
 
 - [Features](#features)
+- [Installation](#installation)
 - [Usage](#usage)
 - [Getting Started](#getting-started)
 - [Options](#options)
@@ -24,6 +25,26 @@ The PUBG Circle Analyzer Tool is a versatile command-line utility designed to he
 - **Circle Prediction:** Predict future circles starting from Zone 3, offering insights to enhance strategic decision-making.
 - **Histogram Creation:** Generate histograms to analyze land ratios, aiding in understanding match dynamics.
 
+## Installation
+
+1. Clone the repository:
+    ```sh
+    git clone https://github.com/Schleifinho/pubg-circle-analyzer.git
+    ```
+2. Navigate to the project directory:
+    ```sh
+    cd pubg-circle-analyzer
+    ```
+3. (Optional) Create and activate a virtual environment:
+    ```sh
+    python3 -m venv venv
+    source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+    ```
+4. Install the required dependencies:
+    ```sh
+    pip install -r requirements.txt
+    ```
+
 ## Usage
 
 The tool offers several command-line options to perform various actions. Here are the primary usage options:
@@ -39,8 +60,25 @@ Detailed usage instructions are available in the command-line help (use `main.py
 
 ## Getting Started
 
-1. **Installation:** Clone this repository and ensure you have `python 3.9` installed on your system. The missing packages can be installed with `pip install [package]` most of the time. If not google is your friend!
+1. **Installation:** Make sure to use `python 3.9`!
 
+   - Clone the repository:
+       ```sh
+       git clone https://github.com/Schleifinho/pubg-circle-analyzer.git
+       ```
+   - Navigate to the project directory:
+       ```sh
+       cd pubg-circle-analyzer
+       ```
+   - (Optional) Create and activate a virtual environment:
+       ```sh
+       python3 -m venv venv
+       source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+       ```
+   - Install the required dependencies:
+       ```sh
+       pip install -r requirements.txt
+       ```
 2. **Assets:** Download and copy the map files from https://github.com/pubg/api-assets/tree/master/Assets/Maps to the repos assets folder
     Name them as follows:
     - Erangel &rarr; `baltic_main.png`

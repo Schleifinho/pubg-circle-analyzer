@@ -1,0 +1,13 @@
+beautifulsoup4==4.12.3
+colorlog==6.8.0
+matplotlib==3.8.3
+numpy==1.26.4
+opencv_python==4.9.0.80
+pandas==2.2.2
+peewee==3.17.0
+Requests==2.32.3
+scikit_learn==1.4.1.post1
+seaborn==0.13.2
+selenium==4.21.0
+tqdm==4.66.1
+validators==0.22.0
