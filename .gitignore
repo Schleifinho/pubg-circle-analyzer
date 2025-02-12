@@ -160,3 +160,9 @@ cython_debug/
 #.idea/
 /config/api_key.py
 /results/
+/assets/baltic_main.png
+/assets/desert_main.png
+/assets/dihorotok_main.png
+/assets/kiki_main.png
+/assets/neon_main.png
+/assets/tiger_main.png
