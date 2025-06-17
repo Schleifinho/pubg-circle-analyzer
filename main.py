@@ -158,6 +158,8 @@ def main():
     elif args.extract_players:
         logger.info("Extract Player Names")
         load_extract_players(args)
+    else:
+        logger.info("Nothing to run")
 
     mysqlDB.close()
 

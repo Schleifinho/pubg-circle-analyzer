@@ -9,7 +9,7 @@ WINDOW_SIZE = 1080
 
 # Unlimited -> DOWNLOAD_SPEED_MULTIPLIER = 0
 # currently 1mb/sec
-DOWNLOAD_SPEED_MULTIPLIER = 8
+DOWNLOAD_SPEED_MULTIPLIER = 0
 # multiply by 1024 to get kb/sec instead of b/sec
 DOWNLOAD_SPEED = DOWNLOAD_SPEED_MULTIPLIER * 1024 * 1024
 
@@ -19,7 +19,7 @@ GREEN = "\033[92m"
 RESET = "\033[0m"
 LOGGING_LEVEL = logging.INFO
 
-DATE_DEFAULT = "01-03-2024"
+DATE_DEFAULT = "01-05-2025"
 DUE_DATE_DEFAULT = datetime.today().strftime('%d-%m-%Y')
 DATE_FORMAT = "%d-%m-%Y"
 # endregion

@@ -1,4 +1,7 @@
 DATABASE = 'pubg'
+#USER = 'pubgapp'
+#PASSWORD = 'pubgapp'
+#HOST = 'db'
 USER = 'root'
 PASSWORD = 'root'
 HOST = 'localhost'

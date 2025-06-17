@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: pubg_python_app
+    volumes:
+      - ./config:/app/config  # Mount local configs to container
+      - ./scripts:/app/scripts # Mount scripts folder
+      - ./results:/app/results # Results scripts folder
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE_HOST: db
+      DATABASE_USER: root
+      DATABASE_PASSWORD: mypassword
+      DATABASE_NAME: mydatabase
+    depends_on:
+      - db
+    entrypoint: ["tail", "-f", "/dev/null"]  # Keeps container running for interactive usage
+
+  db:
+    image: mysql:8.0
+    container_name: my_mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: pubg
+      MYSQL_USER: pubgapp
+      MYSQL_PASSWORD: pubgapp
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
