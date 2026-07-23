@@ -59,13 +59,34 @@ def add_legend_to_image(res, circles_len, date, due_date, match_type):
     line_width_padding = 25
 
     background = prepare_legend_background(res.shape, width, height)
-    res = cv2.addWeighted(background, .67, res, 1, 0)
-    res = add_color_map_to_bg(res, width, 4.4, line_width_padding, line_height_padding)
+    res = cv2.addWeighted(background, 0.67, res, 1, 0)
+    res = add_color_map_to_bg(
+        res,
+        width,
+        4.4,
+        line_width_padding,
+        line_height_padding
+    )
+
+    # cv2.putText requires an 8-bit image
+    res = (np.clip(res, 0.0, 1.0) * 255).astype(np.uint8)
 
     for index, legend_line in enumerate(lines):
-        line = (line_width_padding, (index + 1) * line_height_padding)
-        cv2.putText(res, legend_line.text, line, legend_line.font, legend_line.scale, legend_line.color,
-                    legend_line.font_thickness, legend_line.font_line_type)
+        line = (
+            line_width_padding,
+            (index + 1) * line_height_padding
+        )
+
+        cv2.putText(
+            res,
+            legend_line.text,
+            line,
+            legend_line.font,
+            legend_line.scale,
+            legend_line.color,
+            legend_line.font_thickness,
+            legend_line.font_line_type
+        )
 
     res = add_credits_to_legend(res, width, height)
     return res
@@ -130,7 +151,7 @@ def create_histogram(circles, map_name_tuple, server, date, due_date, match_type
     date_pretty = str(date).replace("-", "_")
     due_date_pretty = str(due_date).replace("-", "_")
     folder_and_name = f"{HISTOGRAMS_FOLDER}/{server}/{map_name_pretty}/{map_name}_{percentage}_{date_pretty}_{due_date_pretty}_{match_type}.jpg"
-    cv2.imwrite(f"{folder_and_name}", res * 255)
+    cv2.imwrite(f"{folder_and_name}", res)
 
 
 def start_generating_histogram(server, maps, date_string, due_date_string, zone, match_type):

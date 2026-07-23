@@ -9,7 +9,7 @@ WINDOW_SIZE = 1080
 
 # Unlimited -> DOWNLOAD_SPEED_MULTIPLIER = 0
 # currently 1mb/sec
-DOWNLOAD_SPEED_MULTIPLIER = 8
+DOWNLOAD_SPEED_MULTIPLIER = 0
 # multiply by 1024 to get kb/sec instead of b/sec
 DOWNLOAD_SPEED = DOWNLOAD_SPEED_MULTIPLIER * 1024 * 1024
 
@@ -19,7 +19,7 @@ GREEN = "\033[92m"
 RESET = "\033[0m"
 LOGGING_LEVEL = logging.INFO
 
-DATE_DEFAULT = "01-03-2024"
+DATE_DEFAULT = "01-05-2025"
 DUE_DATE_DEFAULT = datetime.today().strftime('%d-%m-%Y')
 DATE_FORMAT = "%d-%m-%Y"
 # endregion
@@ -27,8 +27,8 @@ DATE_FORMAT = "%d-%m-%Y"
 # region HEATMAP CONFIG
 
 RESULTS_FOLDER = "./results"
-HEATMAPS_FOLDER = f"{RESULTS_FOLDER}/heatmaps"
-HISTOGRAMS_FOLDER = f"{RESULTS_FOLDER}/histograms"
+HEATMAPS_FOLDER = f"{RESULTS_FOLDER}/heatmaps/{datetime.now().month}"
+HISTOGRAMS_FOLDER = f"{RESULTS_FOLDER}/histograms/{datetime.now().month}"
 ASSETS_FOLDER = "./assets"
 
 # should be same index in pretty
@@ -36,6 +36,8 @@ maps = ["Kiki_Main", "DihorOtok_Main", "Desert_Main", "Baltic_Main", "Tiger_Main
 maps_pretty = ["Deston", "Vikendi", "Miramar", "Erangel", "Taego", "Rondo"]
 
 MAPS = list(zip(maps, maps_pretty))
+
+GAME_MODES = ["squad-fpp", "squad-tpp", "esports-squad", "squad"] #"duo", "duo-fpp"
 # endregion
 
 # DO NOT TOUCH

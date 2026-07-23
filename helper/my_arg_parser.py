@@ -62,6 +62,12 @@ def create_parser():
     )
 
     parser.add_argument(
+        "-a", "--append_file",
+        action="store_true",
+        help=f"{GREEN}Append the file or remove content beforehand{RESET}\n"
+    )
+
+    parser.add_argument(
         "-pl_file", "--player_list_file",
         type=str,  # Specifies the type of the elements in the list
         help=f"{GREEN}Provide a txt file of player names separator = [',', ' ', '\n']{RESET}\n",
