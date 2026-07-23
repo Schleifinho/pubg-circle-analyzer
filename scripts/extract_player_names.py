@@ -10,7 +10,7 @@ from helper.my_logger import logger
 import os
 
 
-def extract_player_names(urls, output_file):
+def extract_player_names(urls, output_file, append_file):
     options = webdriver.FirefoxOptions()
     options.add_argument('--headless')  # Run Firefox in headless mode (optional)
     options.accept_insecure_certs = True  # Accept insecure certificates
@@ -18,13 +18,13 @@ def extract_player_names(urls, output_file):
     firefox_path = "C:/Program Files/Mozilla Firefox/firefox.exe"
     options.binary_location = firefox_path
 
-    service = Service(driver_path, log_path="/dev/null")
-    driver = webdriver.Firefox(options=options, service=service)
+    #service = Service(driver_path, log_path="/dev/null")
+    #driver = webdriver.Firefox(options=options, service=service)
+    driver = webdriver.Firefox(options=options)
 
-    # empty file
-    with open(output_file, "w") as file:
-        file.truncate(0)
+    open_mode = "a" if append_file else "w"
 
+    print(f"Write to file: {output_file}")
     #driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
     for url in urls:
         logger.info(url)
@@ -42,7 +42,7 @@ def extract_player_names(urls, output_file):
         class_pattern = re.compile(r'\bAdvancedTable_bigCell.*\b')
         table_cells = soup.find_all("td", attrs={"class": class_pattern})
 
-        with open(output_file, "a") as file:
+        with open(output_file, open_mode) as file:
             for t in table_cells:
                 player_name_spans = t.find_all("span")
                 # Write each line of content to the file

@@ -4,7 +4,7 @@ import threading
 from datetime import datetime
 import validators
 from math import ceil
-from config.config import NUM_OF_THREADS, DATE_FORMAT
+from config.config import NUM_OF_THREADS, DATE_FORMAT, GAME_MODES
 from tqdm import tqdm
 import time
 from db.fetching_db import fetch_get_or_none_telemetry_log_live_server, fetch_get_or_none_live_server_match_data, \
@@ -63,7 +63,7 @@ def get_url_match_id_from_match_response(match_info_response, match_id):
         logger.warning(f"Match Data Includes bugged: {match_id}!")
     url = find_telemetry_url(match_include)
 
-    if "squad-fpp" not in match_data_attributes['gameMode']:
+    if match_data_attributes["gameMode"] not in GAME_MODES:
         return None, None, None
 
     return url, match_data, match_data_attributes

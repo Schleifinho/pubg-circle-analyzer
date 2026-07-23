@@ -120,7 +120,7 @@ def load_predict(args):
 
 # region Main
 def load_extract_players(args):
-    extract_player_names(args.player_list, args.player_list_file)
+    extract_player_names(args.player_list, args.player_list_file, args.append_file)
 
 
 def load_histogram(args):
