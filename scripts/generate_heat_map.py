@@ -37,8 +37,8 @@ def create_heat_maps(server, maps, date_string, due_date_string, zone, match_typ
 
         logger.debug(f"Matches found: {len(circles)}")
 
-        server_name = "E-SPORT" if server == "esport" else "LIVE" if server == "live" else "E-SPORT/LIVE"
-        title = f"2023 {server_name} {map_i[1]} (# maps: {str(len(circles))}, {match_type})"
+        #server_name = "E-SPORT" if server == "esport" else "LIVE" if server == "live" else "E-SPORT/LIVE"
+        title = f"{date.strftime("%Y-%m")} - {due_date.strftime("%Y-%m")} {map_i[1]} (maps: {str(len(circles))})"
 
         for bw_adjust in BW_ADJUST:
             create_heat_map_for_end_circles(circles, map_i, server, title, date_string, due_date_string, zone, bw_adjust=bw_adjust)
@@ -101,7 +101,7 @@ def create_heat_map_for_end_circles(circles, map_tuple, server, title, date, due
     sns.scatterplot(data=df, x='x', y='y', s=MARKER_SIZE * resizer, label="Zone Center", marker='o', edgecolor="white")
 
     lgnd = ax.legend(bbox_to_anchor=(1.35, 1), fontsize=8*resizer)
-    lgnd.legendHandles[0].set_sizes([100 * resizer])
+    lgnd.legend_handles[0].set_sizes([100 * resizer])
 
     # plt.show()
     plt.savefig(full_name_points)

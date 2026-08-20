@@ -16,6 +16,7 @@ def extract_player_names(urls, output_file, append_file):
     options.accept_insecure_certs = True  # Accept insecure certificates
     driver_path = os.path.abspath("./helper/geckodriver.exe")
     firefox_path = "C:/Program Files/Mozilla Firefox/firefox.exe"
+    #C:\Program Files\Mozilla Firefox
     options.binary_location = firefox_path
 
     #service = Service(driver_path, log_path="/dev/null")

@@ -48,12 +48,16 @@ def add_color_map_to_bg(res, width, line_num, line_width_padding, line_height_pa
 
 
 def add_legend_to_image(res, circles_len, date, due_date, match_type):
-    lines = [LegendLine(f"Number Of Maps: {circles_len} ({match_type})", scale=.9),
+    left = f"{int(THRESHOLD_RANGE * 100)}%"
+    right = "100%"
+    linewidth = 48
+    lines = [LegendLine(f"Number Of Maps: {circles_len}", scale=.9),
              LegendLine(f"From: {date}"),
              LegendLine(f"To: {due_date}"),
              LegendLine("Not In Zone 4 Percentage"),
-             LegendLine(f"{int(THRESHOLD_RANGE * 100)}%                   100%", color=COLOR_WHITE)]
-    width = 375
+             LegendLine(f"{left:<{linewidth - len(right)}}{right}", color=COLOR_WHITE)]
+    #width = 375
+    width = 400
     height = 180
     line_height_padding = 30
     line_width_padding = 25

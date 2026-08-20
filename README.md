@@ -60,7 +60,7 @@ Detailed usage instructions are available in the command-line help (use `main.py
 
 ## Getting Started
 
-1. **Installation:** Make sure to use `python 3.9`!
+1. **Installation:** Make sure to use `python 3.14`!
 
    - Clone the repository:
        ```sh
@@ -72,13 +72,16 @@ Detailed usage instructions are available in the command-line help (use `main.py
        ```
    - (Optional) Create and activate a virtual environment:
        ```sh
-       python3 -m venv venv
-       source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+       python -m venv .
+       .\.venv\Scripts\activate
        ```
-   - Install the required dependencies:
+   - Install the required dependencies :
        ```sh
-       pip install -r requirements.txt
+       pip install -r requirements.txt 
+       or 
+       python -m pip install -r requirements.txt  
        ```
+     
 2. **Assets:** Download and copy the map files from https://github.com/pubg/api-assets/tree/master/Assets/Maps to the repos assets folder
     Name them as follows:
     - Erangel &rarr; `baltic_main.png`
